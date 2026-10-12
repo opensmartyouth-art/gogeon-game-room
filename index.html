@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#E4E9E4">
 <title>고전게임방</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Song+Myung&display=swap">
+<link rel="preload" href="fonts/eulyoo-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/pretendard-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face { font-family: 'Eulyoo1945'; src: url(fonts/eulyoo-semibold.woff2) format('woff2'); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url(fonts/pretendard-400.woff2) format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url(fonts/pretendard-500.woff2) format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url(fonts/pretendard-600.woff2) format('woff2'); font-weight: 600 700; font-display: swap; }
+
 /* 레이아웃: 홈은 왼쪽 정렬 목록, 게임은 모바일 한 열 / 넓은 화면 판+옆 패널.
    색은 청자빛 회색 바탕에 먹청 판, 말은 단청의 적색과 쪽빛. */
 :root {
@@ -34,8 +38,8 @@
   --gold: #E0A92E;
   --wood-hi: #E6C583; --wood-lo: #C99A55; --wood-line: #5B3F1E;
   --accent: #2E6A56;
-  --font-display: 'Song Myung', 'Noto Serif KR', 'Nanum Myeongjo', serif;
-  --font-body: 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-display: 'Eulyoo1945', 'Noto Serif KR', 'Nanum Myeongjo', serif;
+  --font-body: 'Pretendard', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {

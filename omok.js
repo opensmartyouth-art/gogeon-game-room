@@ -559,6 +559,7 @@
   });
   q('#oonline').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'oCode') joinO(e.target.value); });
 
+  window.omokSettings = function () { renderSet(); };
   window.omokEnter = function () {
     renderSet();
     if (wantOnlineO) { wantOnlineO = false; if (typeof Peer !== 'undefined') { oc.mode = 'online'; renderSet(); onMode(); return; } }

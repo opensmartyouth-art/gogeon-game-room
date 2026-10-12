@@ -175,10 +175,10 @@ const PENTA = [0, 2, 4, 7, 9]; // 계면조가 아닌 밝은 평조 느낌의 5�
 const note = (k, base) => (base || 392) * Math.pow(2, (PENTA[k % 5] + 12 * Math.floor(k / 5)) / 12);
 
 /* ---------- 배경음악: bgm.mp3 파일이 있을 때만 켜진다 ---------- */
-let bgmEl = null, bgmOK = false;
+let bgmEl = null, bgmOK = false, bgmTouched = false;
 function bgmProbe() {
   const ok = r => r.ok && /audio|mpeg|octet/i.test(r.headers.get('content-type') || '');
-  const done = v => { bgmOK = v; if (v) { renderSettings(); if (window.omokSettings) window.omokSettings(); } };
+  const done = v => { bgmOK = v; if (v) { bgmLoad(); if (bgmTouched) bgmSync(); renderSettings(); if (window.omokSettings) window.omokSettings(); } };
   try {
     fetch('bgm.mp3', { method: 'HEAD' }).then(r => {
       if (ok(r)) return done(true);
@@ -186,14 +186,40 @@ function bgmProbe() {
     }).catch(() => fetch('bgm.mp3', { headers: { Range: 'bytes=0-0' } }).then(r2 => done(ok(r2))).catch(() => { /* 파일 없음 */ }));
   } catch (e) { /* 무시 */ }
 }
+const BGM_VOL = 0.32;
+function bgmLoad() {
+  if (bgmEl) return bgmEl;
+  try { bgmEl = new Audio('bgm.mp3'); bgmEl.loop = true; bgmEl.preload = 'auto'; bgmEl.volume = 0; bgmEl.load(); } catch (e) { bgmEl = null; }
+  return bgmEl;
+}
+let bgmFade = 0;
+function bgmRamp(to, ms, done) {
+  clearInterval(bgmFade);
+  const el = bgmEl; if (!el) return;
+  const from = el.volume, t0 = performance.now();
+  bgmFade = setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / ms);
+    try { el.volume = from + (to - from) * k; } catch (e) { /* iOS는 볼륨 고정 */ }
+    if (k >= 1) { clearInterval(bgmFade); if (done) done(); }
+  }, 40);
+}
 function bgmSync() {
   if (!bgmOK) return;
   try {
-    if (!bgmEl) { bgmEl = new Audio('bgm.mp3'); bgmEl.loop = true; bgmEl.volume = 0.32; }
-    if (cfg.bgm !== 'off' && !document.hidden) { const p = bgmEl.play(); if (p && p.catch) p.catch(() => { /* 첫 터치 뒤에 재생 */ }); }
-    else bgmEl.pause();
+    const el = bgmLoad(); if (!el) return;
+    if (cfg.bgm !== 'off' && !document.hidden) {
+      const p = el.play();
+      const up = () => bgmRamp(BGM_VOL, 1400);
+      if (p && p.then) p.then(up).catch(() => { /* 첫 터치가 올 때까지 기다림 */ }); else up();
+    } else bgmRamp(0, 250, () => el.pause());
   } catch (e) { /* 무시 */ }
 }
+/* 브라우저는 첫 터치 전에는 소리를 못 켜게 막아서, 화면 어디든 처음 닿는 순간 바로 시작한다 */
+['pointerup', 'touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, function once() {
+  bgmTouched = true;
+  if (bgmEl && !bgmEl.paused) { document.removeEventListener(ev, once, true); return; }
+  bgmSync();
+}, true));
 document.addEventListener('visibilitychange', bgmSync);
 let hapticFail = !(typeof navigator !== 'undefined' && navigator.vibrate);
 const HAPTIC = { pick: 10, snap: 6, drop: 18, hop: 10, bad: [28, 40, 28], win: [20, 70, 20, 70, 50], lose: [70, 60, 70] };
