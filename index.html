@@ -32,6 +32,7 @@
   --board-lo: #1B2822;
   --hole-rim: rgba(255,255,255,0.12);
   --gold: #E0A92E;
+  --wood-hi: #E6C583; --wood-lo: #C99A55; --wood-line: #5B3F1E;
   --accent: #2E6A56;
   --font-display: 'Song Myung', 'Noto Serif KR', 'Nanum Myeongjo', serif;
   --font-body: 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -42,6 +43,7 @@
     --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
     --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
     --gold: #EBBF52; --accent: #7BC4A7;
+    --wood-hi: #A98450; --wood-lo: #86642F; --wood-line: #2B1D0D;
     color-scheme: dark;
   }
 }
@@ -50,6 +52,7 @@
   --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
   --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
   --gold: #EBBF52; --accent: #7BC4A7;
+  --wood-hi: #A98450; --wood-lo: #86642F; --wood-line: #2B1D0D;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -198,6 +201,45 @@ button { font-family: inherit; }
 .rules summary { cursor: pointer; font-weight: 500; min-height: 32px; }
 .rules ol { margin: 8px 0 0; padding-left: 1.25em; display: flex; flex-direction: column; gap: 8px; color: var(--ink-2); font-size: 14px; }
 .rules li { text-wrap: pretty; }
+
+/* 오목 */
+.dot.sb { background: radial-gradient(circle at 35% 30%, #5A6660, #0B100E 70%); box-shadow: inset 0 0 0 1.5px #000; }
+.dot.sw { background: radial-gradient(circle at 35% 30%, #fff, #D5DAD6 70%); box-shadow: inset 0 0 0 1.5px #9AA39D; }
+#oboard { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
+.owood { fill: url(#gWood); }
+.orim { fill: color-mix(in srgb, var(--gold) 70%, var(--board-edge)); }
+.oline { stroke: var(--wood-line); stroke-width: 0.8; opacity: 0.8; }
+.oline.edge { stroke-width: 1.4; opacity: 1; }
+.ostar { fill: var(--wood-line); }
+.ost { transform-box: fill-box; transform-origin: center; }
+.ost.settle { animation: ostone 240ms ease-out; }
+@keyframes ostone { 0% { transform: translateY(-5px) scale(1.3); opacity: 0.6; } 60% { transform: scale(0.94); opacity: 1; } 100% { transform: none; } }
+.oghost { opacity: 0.62; pointer-events: none; }
+.ocross { stroke: var(--gold); stroke-width: 1; opacity: 0.9; pointer-events: none; }
+.olastm { fill: none; stroke: var(--gold); stroke-width: 1.8; }
+.owin { fill: none; stroke: var(--gold); stroke-width: 2.2; animation: halo 1.2s ease-in-out infinite; }
+.oripple { fill: none; stroke: var(--gold); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: ripple 520ms ease-out forwards; }
+.rtitle.wb { color: var(--ink); } .rtitle.ww { color: var(--ink-2); }
+
+/* 가로 화면(폰을 눕혔을 때): 판을 화면 높이에 맞추고 정보와 설정은 오른쪽 열로 */
+@media (orientation: landscape) and (max-height: 600px) {
+  body { padding-block: 8px 16px; padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .top { margin-bottom: 6px; gap: 10px; }
+  .back { min-height: 36px; }
+  .gtitle { font-size: 20px; }
+  .layout { grid-template-columns: auto minmax(0, 1fr); gap: 4px 20px; align-items: start; }
+  .stage { display: contents; }
+  .boardwrap { grid-column: 1; grid-row: 1 / span 3; align-self: start; position: sticky; top: 6px; width: fit-content; }
+  #board, #oboard { height: calc(100vh - 70px); height: calc(100dvh - 70px); width: auto; max-width: 56vw; }
+  .players { grid-column: 2; grid-row: 1; }
+  .say { grid-column: 2; grid-row: 2; margin: 4px 2px; min-height: 0; }
+  .side { grid-column: 2; grid-row: 3; position: static; }
+  .settings { margin-top: 12px; gap: 8px; }
+  .online { margin-top: 12px; }
+  .rtitle { font-size: 38px; }
+  .brand { font-size: 36px; }
+  .games { margin-top: 16px; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -267,10 +309,67 @@ button { font-family: inherit; }
       </div>
     </div>
   </section>
+
+  <section id="view-omok" hidden>
+    <div class="top">
+      <button type="button" class="back" id="obk">← 홈</button>
+      <h2 class="gtitle">오목</h2>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="opl1"><span class="dot sb"></span><div><b id="opn1">나</b><small id="ops1"></small></div></div>
+          <div class="pl" id="opl2"><span class="dot sw"></span><div><b id="opn2">컴퓨터</b><small id="ops2"></small></div></div>
+        </div>
+        <p class="say" id="osay" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="oboard" viewBox="0 0 320 320" role="application" aria-label="오목 판. 방향키로 움직이고 엔터로 놓아요" tabindex="0">
+            <defs>
+              <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--wood-hi)"/><stop offset="1" style="stop-color:var(--wood-lo)"/></linearGradient>
+              <radialGradient id="gStB" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6B7872"/><stop offset="0.45" stop-color="#1A2320"/><stop offset="1" stop-color="#050807"/></radialGradient>
+              <radialGradient id="gStW" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.6" stop-color="#E8ECE9"/><stop offset="1" stop-color="#B9C1BC"/></radialGradient>
+              <filter id="ograin" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 0 0.1  0 0 0 0.18 0"/></filter>
+              <radialGradient id="gOSh" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+            </defs>
+            <g id="obg"></g><g id="odyn"></g><g id="ofx" pointer-events="none"></g>
+          </svg>
+          <div class="result" id="oresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="ortitle"></p>
+              <p class="rsub" id="orsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="orAgain">한 판 더</button>
+                <button type="button" class="btn" id="orView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="row">
+          <button type="button" class="btn" id="oundo">무르기</button>
+          <button type="button" class="btn primary" id="oagain">새 게임</button>
+          <p class="count" id="ocount"></p>
+        </div>
+        <div class="online" id="oonline" hidden></div>
+        <div class="settings" id="osettings"></div>
+        <details class="rules" id="orules">
+          <summary>규칙</summary>
+          <ol>
+            <li>검은 돌이 먼저 놓고, 번갈아 가며 교차점에 돌을 하나씩 놓아요.</li>
+            <li>가로, 세로, 대각선 어느 방향이든 내 돌 다섯 개(또는 그 이상)를 먼저 한 줄로 이으면 이겨요.</li>
+            <li>금수(3·3, 4·4 같은 제한)가 없는 자유룰이에요. 판이 가득 차면 무승부예요.</li>
+            <li>구슬을 끌어 놓을 자리를 맞춘 뒤 손을 떼면 놓여요. 손가락 위쪽에 돌이 보여서 가리지 않아요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script src="core.js"></script>
 <script src="game.js"></script>
+<script src="omok.js"></script>
 </body>
 </html>

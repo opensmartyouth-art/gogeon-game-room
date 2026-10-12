@@ -864,8 +864,8 @@ const GAMES = [
     desc: '별 모양 판에서 내 구슬 10개를 반대편 진영으로 먼저 옮기면 이겨요. 구슬을 뛰어넘어 길게 이어 가는 게 핵심이에요.' },
   { id: 'hobak', name: '호박고누', ready: false, mini: miniDash, meta: '2인',
     desc: '한국 전통 고누예요. 규칙을 확정한 뒤에 추가해요.' },
-  { id: 'omok', name: '오목', ready: false, mini: miniOmok, meta: '2인 · 컴퓨터 대전',
-    desc: '돌 다섯 개를 먼저 한 줄로 놓으면 이겨요.' }
+  { id: 'omok', name: '오목', ready: true, mini: miniOmok, meta: '2인 · 컴퓨터 · 온라인 대전',
+    desc: '돌 다섯 개를 먼저 한 줄로 이으면 이겨요. 손가락 위로 돌이 떠서, 놓을 자리를 가리지 않고 맞출 수 있어요.' }
 ];
 function renderHub() {
   $('#games').innerHTML = GAMES.map(g =>
@@ -880,12 +880,17 @@ function show(v) {
   view = v;
   $('#view-hub').hidden = v !== 'hub';
   $('#view-diamond').hidden = v !== 'diamond';
+  const ov = $('#view-omok'); if (ov) ov.hidden = v !== 'omok';
+  if (v === 'omok') {
+    token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
+    if (window.omokEnter) window.omokEnter();
+  } else if (window.omokLeave) window.omokLeave();
   if (v === 'diamond') {
     if (S.busy && S.think) { S.busy = false; S.think = false; }
     render();
     maybeAI();
     tryRemote();
-  } else {
+  } else if (v !== 'omok') {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }
