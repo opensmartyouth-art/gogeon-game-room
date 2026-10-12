@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#E4E9E4">
+<title>고전게임방</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Song+Myung&display=swap">
+<style>
+/* 레이아웃: 홈은 왼쪽 정렬 목록, 게임은 모바일 한 열 / 넓은 화면 판+옆 패널.
+   색은 청자빛 회색 바탕에 먹청 판, 말은 단청의 적색과 쪽빛. */
+:root {
+  --bg: #E4E9E4;
+  --surface: #F3F6F2;
+  --ink: #18221D;
+  --ink-2: #53625A;
+  --line: #C6CFC7;
+  --board: #2A3A33;
+  --board-edge: #3E5247;
+  --hole: #16211C;
+  --red: #D8472F;
+  --red-ink: #98291A;
+  --red-hi: #FFA489;
+  --red-lo: #8A2214;
+  --blue: #3A66B8;
+  --blue-ink: #213E7B;
+  --blue-hi: #A6C4F7;
+  --blue-lo: #172E66;
+  --board-hi: #3F5A4D;
+  --board-lo: #1B2822;
+  --hole-rim: rgba(255,255,255,0.12);
+  --gold: #E0A92E;
+  --accent: #2E6A56;
+  --font-display: 'Song Myung', 'Noto Serif KR', 'Nanum Myeongjo', serif;
+  --font-body: 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1512; --surface: #18211D; --ink: #E4EBE6; --ink-2: #97A59D; --line: #2B3732;
+    --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
+    --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
+    --gold: #EBBF52; --accent: #7BC4A7;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1512; --surface: #18211D; --ink: #E4EBE6; --ink-2: #97A59D; --line: #2B3732;
+  --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
+  --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
+  --gold: #EBBF52; --accent: #7BC4A7;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding-block: 20px 40px;
+  padding-inline: 16px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
+  background-image: radial-gradient(1200px 500px at 50% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+.app { max-width: 980px; margin: 0 auto; }
+button { font-family: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 홈 */
+.brand { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 10vw, 56px); line-height: 1.1; margin: 8px 0 0; letter-spacing: -0.01em; }
+.brand::after { content: ""; display: block; width: 104px; height: 5px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, #2F5DA8 0 20%, #D8472F 20% 40%, #E0A92E 40% 60%, #EDEFE8 60% 80%, #1B2420 80%); }
+.lede { margin: 12px 0 0; max-width: 32em; color: var(--ink-2); text-wrap: pretty; }
+.games { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.game {
+  display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: center;
+  width: 100%; padding: 14px 16px; text-align: left; color: inherit; font: inherit;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; cursor: pointer;
+}
+.game { transition: transform 120ms ease-out, box-shadow 120ms ease-out, border-color 120ms; }
+.game:not([disabled]):hover { border-color: var(--ink-2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+.game:not([disabled]):active { transform: translateY(0) scale(0.99); }
+.btn:not(:disabled):active { transform: scale(0.97); }
+.game[disabled] { cursor: default; background: transparent; border-style: dashed; color: var(--ink-2); }
+.mini { display: grid; place-items: center; width: 64px; }
+.gtext { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.gname { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-family: var(--font-display); font-size: 21px; line-height: 1.25; }
+.gdesc { font-size: 14px; color: var(--ink-2); text-wrap: pretty; }
+.gmeta { font-size: 12px; color: var(--ink-2); letter-spacing: 0.02em; }
+.chip { font-family: var(--font-body); font-size: 12px; line-height: 1; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); }
+.chip.go { background: var(--accent); border-color: transparent; color: var(--bg); font-weight: 500; }
+.m0 { fill: var(--board); } .m1 { fill: url(#gRed); } .m2 { fill: url(#gBlue); }
+.gl { stroke: var(--ink-2); stroke-width: 1.4; }
+.stb { fill: var(--ink); } .stw { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; }
+.dash { fill: none; stroke: var(--ink-2); stroke-width: 1.6; stroke-dasharray: 4 4; }
+
+/* 게임 */
+.top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.back { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 14px; cursor: pointer; }
+.gtitle { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+@media (min-width: 820px) {
+  .layout { grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: 40px; align-items: start; }
+  .side { position: sticky; top: 20px; }
+}
+.players { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pl { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.pl.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.dot { flex: none; width: 20px; height: 20px; border-radius: 50%; }
+.dot.p1 { background: var(--red); box-shadow: inset 0 0 0 2px var(--red-ink); }
+.dot.p2 { background: var(--blue); box-shadow: inset 0 0 0 2px var(--blue-ink); }
+.pl b { display: block; font-size: 14px; line-height: 1.3; }
+.pl small { display: block; color: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+.say { min-height: 26px; margin: 10px 2px 8px; font-weight: 500; text-wrap: pretty; }
+.boardwrap { position: relative; }
+#board { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.rim { fill: color-mix(in srgb, var(--gold) 72%, var(--board-edge)); stroke: color-mix(in srgb, var(--gold) 72%, var(--board-edge)); stroke-width: 40; stroke-linejoin: round; }
+.tray { fill: var(--board); stroke: var(--board); stroke-width: 35; stroke-linejoin: round; }
+.hole { fill: url(#gHole); }
+.holerim { fill: var(--hole-rim); }
+.tray, .rim { }
+.inlay { fill: none; stroke: var(--gold); stroke-width: 1.3; stroke-linejoin: round; opacity: 0.6; }
+.halo { fill: none; stroke: var(--gold); stroke-width: 1.6; animation: halo 1.8s ease-in-out infinite; }
+@keyframes halo { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.65; } }
+.trail { transform-box: fill-box; transform-origin: center; animation: trail 520ms ease-out forwards; }
+.trail.t1 { fill: var(--red-hi); } .trail.t2 { fill: var(--blue-hi); }
+@keyframes trail { from { opacity: 0.8; transform: scale(1); } to { opacity: 0; transform: scale(0.2); } }
+.ripple { fill: none; stroke: var(--gold); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: ripple 560ms ease-out forwards; }
+@keyframes ripple { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(2.4); } }
+.conf { transform-box: fill-box; transform-origin: center; animation: conf 1500ms cubic-bezier(0.15, 0.7, 0.35, 1) forwards; }
+@keyframes conf { from { opacity: 1; transform: translate(0, 0) rotate(0); } to { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); } }
+.tint1 { fill: var(--red); opacity: 0.34; }
+.tint2 { fill: var(--blue); opacity: 0.34; }
+.pcg { will-change: transform; }
+.pc1 { fill: url(#gRed); stroke: var(--red-ink); stroke-width: 1.2; }
+.pc2 { fill: url(#gBlue); stroke: var(--blue-ink); stroke-width: 1.2; }
+.gloss { fill: url(#gGloss); }
+.glow { opacity: 0; transition: opacity 120ms; }
+.glow1 { fill: var(--red); } .glow2 { fill: var(--blue); }
+.lift.up .glow { opacity: 0.4; }
+.shine { fill: #fff; opacity: 0.8; }
+.rimlt { fill: #fff; opacity: 0.16; }
+.inner { fill: none; stroke: #fff; stroke-opacity: 0.32; stroke-width: 1.4; }
+.shadow { fill: url(#gShadow); }
+.lift { transition: transform 90ms ease-out; }
+.lift.up { transform: translateY(-3px) scale(1.2); }
+.lift.settle { animation: settle 220ms ease-out; }
+@keyframes settle {
+  0% { transform: translateY(-4px) scale(1.22); }
+  60% { transform: scale(0.93); }
+  100% { transform: none; }
+}
+.drag, .mover { pointer-events: none; }
+.dest { fill: var(--gold); transform-box: fill-box; transform-origin: center; transition: transform 80ms ease-out; animation: dp 1.4s ease-in-out infinite; }
+@keyframes dp { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.dest.snapon { transform: scale(1.9); }
+.ring { fill: none; stroke: var(--gold); stroke-width: 2.8; }
+.lastf { fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-dasharray: 3 3; opacity: 0.8; }
+.lastt { fill: none; stroke: var(--gold); stroke-width: 1.6; opacity: 0.55; }
+.hit { fill: transparent; pointer-events: all; }
+.hit.act { cursor: pointer; }
+.hit:focus-visible { outline: none; stroke: var(--gold); stroke-width: 2.4; }
+
+.result { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.result::before { content: ""; position: absolute; inset: 0; background: var(--bg); opacity: 0.86; }
+.rbox { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 16px; }
+.rtitle { margin: 0; font-family: var(--font-display); font-size: 48px; line-height: 1.1; }
+.rtitle.w1 { color: var(--red); } .rtitle.w2 { color: var(--blue); }
+.rsub { margin: 0 0 12px; color: var(--ink-2); }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 15px; font-weight: 500; cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: transparent; color: var(--bg); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.count { margin: 0 0 0 auto; color: var(--ink-2); font-size: 13px; font-variant-numeric: tabular-nums; }
+.settings { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.set { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.setlabel { min-width: 3.4em; font-size: 13px; color: var(--ink-2); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button { min-height: 40px; padding: 0 14px; border: 0; background: none; color: var(--ink-2); font-size: 14px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-checked="true"] { background: var(--ink); color: var(--bg); font-weight: 500; }
+.hint { margin: 0; font-size: 12px; color: var(--ink-2); text-wrap: pretty; }
+.hint.warn { color: var(--red); }
+.online { margin-top: 18px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.olh { margin: 0; font-family: var(--font-display); font-size: 18px; }
+.olin { flex-wrap: nowrap; }
+.olinput { flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; letter-spacing: 0.2em; text-transform: lowercase; }
+.olcodebox { display: flex; align-items: center; gap: 12px; }
+.olcode { font-family: var(--font-display); font-size: 34px; line-height: 1; letter-spacing: 0.18em; user-select: all; -webkit-user-select: all; }
+.olst { margin: 0; color: var(--ink-2); font-size: 13px; }
+.rules { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 12px; }
+.rules summary { cursor: pointer; font-weight: 500; min-height: 32px; }
+.rules ol { margin: 8px 0 0; padding-left: 1.25em; display: flex; flex-direction: column; gap: 8px; color: var(--ink-2); font-size: 14px; }
+.rules li { text-wrap: pretty; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <section id="view-hub">
+    <h1 class="brand">고전게임방</h1>
+    <p class="lede">판 위에서 둘이 겨루는 옛 놀이를 모았어요. 컴퓨터와 겨루거나 한 화면에서 둘이 할 수 있어요.</p>
+    <ul class="games" id="games"></ul>
+  </section>
+
+  <section id="view-diamond" hidden>
+    <div class="top">
+      <button type="button" class="back" id="back">← 홈</button>
+      <h2 class="gtitle">다이아몬드 게임</h2>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="pl1"><span class="dot p1"></span><div><b id="pn1">나</b><small id="ps1"></small></div></div>
+          <div class="pl" id="pl2"><span class="dot p2"></span><div><b id="pn2">컴퓨터</b><small id="ps2"></small></div></div>
+        </div>
+        <p class="say" id="say" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="board" viewBox="-204 -236 408 472" role="group" aria-label="다이아몬드 게임 판">
+            <defs>
+              <radialGradient id="gRed" cx="0.36" cy="0.3" r="0.85"><stop offset="0" style="stop-color:var(--red-hi)"/><stop offset="0.5" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red-lo)"/></radialGradient>
+              <radialGradient id="gBlue" cx="0.36" cy="0.3" r="0.85"><stop offset="0" style="stop-color:var(--blue-hi)"/><stop offset="0.5" style="stop-color:var(--blue)"/><stop offset="1" style="stop-color:var(--blue-lo)"/></radialGradient>
+              <radialGradient id="gHole" cx="0.5" cy="0.42" r="0.6"><stop offset="0" stop-color="#050907"/><stop offset="1" style="stop-color:var(--hole)"/></radialGradient>
+              <radialGradient id="gShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+              <linearGradient id="gGloss" x1="0.2" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.42"/><stop offset="0.45" stop-color="#fff" stop-opacity="0.04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+              <linearGradient id="gBoard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--board-hi)"/><stop offset="1" style="stop-color:var(--board-lo)"/></linearGradient>
+              <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.09 0"/></filter>
+            </defs>
+            <g id="bgl"></g><g id="dyn"></g><g id="fxl" pointer-events="none"></g>
+          </svg>
+          <div class="result" id="result" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="rtitle"></p>
+              <p class="rsub" id="rsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="rAgain">한 판 더</button>
+                <button type="button" class="btn" id="rView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="row">
+          <button type="button" class="btn" id="undo">되돌리기</button>
+          <button type="button" class="btn primary" id="again">새 게임</button>
+          <p class="count" id="count"></p>
+        </div>
+        <div class="online" id="online" hidden></div>
+        <div class="settings" id="settings"></div>
+        <details class="rules" id="rules">
+          <summary>규칙</summary>
+          <ol>
+            <li>내 구슬은 이웃한 빈 칸으로 한 칸 움직이거나, 바로 옆 구슬(내 것이든 상대 것이든)을 뛰어넘어 그 뒤 빈 칸에 내려요.</li>
+            <li>뛰어넘은 자리에서 또 뛰어넘을 수 있으면 한 턴에 계속 이어 갈 수 있고, 중간에서 멈춰도 돼요.</li>
+            <li>구슬을 잡지는 않아요. 반대편 삼각형 진영 10칸을 먼저 채우면 이겨요. 상대 구슬이 몇 개 남아 있어도 진영이 모두 차고 내 구슬이 하나 이상 있으면 이긴 거예요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script src="core.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
