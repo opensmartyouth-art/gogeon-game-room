@@ -240,6 +240,19 @@ button { font-family: inherit; }
   .brand { font-size: 36px; }
   .games { margin-top: 16px; }
 }
+
+/* 설정: 좁은 화면에서는 위쪽 버튼으로 여는 아래 시트 */
+.gear { display: none; margin-left: auto; min-height: 40px; padding: 0 14px; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 14px; cursor: pointer; }
+.phd { display: none; }
+@media (max-width: 819px), (orientation: landscape) and (max-height: 600px) {
+  .gear { display: inline-flex; }
+  .panel { display: none; }
+  .panel.open { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; max-height: 78vh; max-height: 78dvh; overflow: auto; overscroll-behavior: contain; background: var(--bg); border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; padding: 6px 18px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 0 0 100vmax rgba(10,18,14,.42); }
+  .panel.open .phd { display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); padding: 10px 0 6px; }
+  .panel .phd b { font-size: 16px; font-weight: 500; }
+  .pclose { min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 14px; cursor: pointer; }
+  .panel .settings { margin-top: 8px; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -257,6 +270,7 @@ button { font-family: inherit; }
     <div class="top">
       <button type="button" class="back" id="back">← 홈</button>
       <h2 class="gtitle">다이아몬드 게임</h2>
+      <button type="button" class="gear" data-p="panel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -296,8 +310,10 @@ button { font-family: inherit; }
           <button type="button" class="btn primary" id="again">새 게임</button>
           <p class="count" id="count"></p>
         </div>
-        <div class="online" id="online" hidden></div>
-        <div class="settings" id="settings"></div>
+        <div class="panel" id="panel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="online" id="online" hidden></div>
+          <div class="settings" id="settings"></div>
+        </div>
         <details class="rules" id="rules">
           <summary>규칙</summary>
           <ol>
@@ -314,6 +330,7 @@ button { font-family: inherit; }
     <div class="top">
       <button type="button" class="back" id="obk">← 홈</button>
       <h2 class="gtitle">오목</h2>
+      <button type="button" class="gear" data-p="opanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -351,8 +368,10 @@ button { font-family: inherit; }
           <button type="button" class="btn primary" id="oagain">새 게임</button>
           <p class="count" id="ocount"></p>
         </div>
-        <div class="online" id="oonline" hidden></div>
-        <div class="settings" id="osettings"></div>
+        <div class="panel" id="opanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="online" id="oonline" hidden></div>
+          <div class="settings" id="osettings"></div>
+        </div>
         <details class="rules" id="orules">
           <summary>규칙</summary>
           <ol>

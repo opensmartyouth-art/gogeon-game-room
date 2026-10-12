@@ -177,11 +177,13 @@ const note = (k, base) => (base || 392) * Math.pow(2, (PENTA[k % 5] + 12 * Math.
 /* ---------- 배경음악: bgm.mp3 파일이 있을 때만 켜진다 ---------- */
 let bgmEl = null, bgmOK = false;
 function bgmProbe() {
+  const ok = r => r.ok && /audio|mpeg|octet/i.test(r.headers.get('content-type') || '');
+  const done = v => { bgmOK = v; if (v) { renderSettings(); if (window.omokSettings) window.omokSettings(); } };
   try {
     fetch('bgm.mp3', { method: 'HEAD' }).then(r => {
-      bgmOK = r.ok && /audio|mpeg|octet/i.test(r.headers.get('content-type') || '');
-      if (bgmOK) renderSettings();
-    }).catch(() => { /* 파일 없음 */ });
+      if (ok(r)) return done(true);
+      return fetch('bgm.mp3', { headers: { Range: 'bytes=0-0' } }).then(r2 => done(ok(r2)));
+    }).catch(() => fetch('bgm.mp3', { headers: { Range: 'bytes=0-0' } }).then(r2 => done(ok(r2))).catch(() => { /* 파일 없음 */ }));
   } catch (e) { /* 무시 */ }
 }
 function bgmSync() {
@@ -878,6 +880,7 @@ function renderHub() {
 
 function show(v) {
   view = v;
+  document.querySelectorAll('.panel.open').forEach(p => p.classList.remove('open'));
   $('#view-hub').hidden = v !== 'hub';
   $('#view-diamond').hidden = v !== 'diamond';
   const ov = $('#view-omok'); if (ov) ov.hidden = v !== 'omok';
@@ -902,6 +905,22 @@ $('#games').addEventListener('click', e => {
   const b = e.target.closest('.game');
   if (b && !b.disabled) show(b.dataset.id);
 });
+
+/* 설정 시트(좁은 화면) */
+(function () {
+  const setP = (p, on) => {
+    p.classList.toggle('open', on);
+    const g = document.querySelector('.gear[data-p="' + p.id + '"]');
+    if (g) g.setAttribute('aria-expanded', on ? 'true' : 'false');
+  };
+  document.addEventListener('click', e => {
+    const g = e.target.closest('.gear');
+    if (g) { const p = document.getElementById(g.dataset.p); setP(p, !p.classList.contains('open')); return; }
+    if (e.target.closest('.pclose')) { setP(e.target.closest('.panel'), false); return; }
+    document.querySelectorAll('.panel.open').forEach(p => { if (!e.composedPath().includes(p)) setP(p, false); });
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.panel.open').forEach(p => setP(p, false)); });
+})();
 $('#back').addEventListener('click', () => show('hub'));
 $('#undo').addEventListener('click', undo);
 $('#again').addEventListener('click', requestNew);
