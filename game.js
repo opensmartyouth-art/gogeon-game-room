@@ -15,20 +15,49 @@ const store = {
 const TRI_UP = [[0, -8 * H3 * D], [-6 * D, 4 * H3 * D], [6 * D, 4 * H3 * D]];
 const TRI_DN = [[0, 8 * H3 * D], [-6 * D, -4 * H3 * D], [6 * D, -4 * H3 * D]];
 const pts = t => t.map(p => f1(p[0]) + ',' + f1(p[1])).join(' ');
+/* 판: 아이보리 바탕에 여섯 꼭짓점을 빨강·노랑·초록으로 칠한 전통 모양(위·아래 빨강, 좌상·우하 노랑, 우상·좌하 초록) */
+const ZONE_COL = { r: '#E2453C', y: '#F6E24C', g: '#2F9E4F' };
+const ZONES = (() => {
+  const out = [];
+  const defs = [c => c.z <= -5, c => c.z >= 5, c => c.x >= 5, c => c.x <= -5, c => c.y >= 5, c => c.y <= -5];
+  defs.forEach(fn => {
+    const idx = []; CELLS.forEach((c, i) => { if (fn(c)) idx.push(i); });
+    const P2 = idx.map(i => POS[i]);
+    const cx = P2.reduce((s, p) => s + p.x, 0) / P2.length, cy = P2.reduce((s, p) => s + p.y, 0) / P2.length;
+    // 꼭짓점 3개: 중심에서 가장 먼 칸 하나와, 그 반대쪽 밑변의 양끝 칸
+    const far = P2.slice().sort((p, q) => Math.hypot(q.x - cx, q.y - cy) - Math.hypot(p.x - cx, p.y - cy));
+    const hull = [];
+    const sorted = P2.slice().sort((p, q) => p.x - q.x || p.y - q.y);
+    const cross = (o, p, q) => (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x);
+    const lo = []; sorted.forEach(p => { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); });
+    const up = []; sorted.slice().reverse().forEach(p => { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); });
+    lo.pop(); up.pop(); hull.push(...lo, ...up);
+    const col = Math.abs(cx) < 1 ? 'r' : (cx < 0) === (cy < 0) ? 'y' : 'g';
+    out.push({ idx, hull, col });
+  });
+  return out;
+})();
 const TRAY =
   '<clipPath id="starClip"><polygon points="' + pts(TRI_UP) + '"/><polygon points="' + pts(TRI_DN) + '"/></clipPath>' +
+  '<mask id="trayMask" maskUnits="userSpaceOnUse" x="-204" y="-236" width="408" height="472"><g fill="#fff" stroke="#fff" stroke-width="35" stroke-linejoin="round"><polygon points="' + pts(TRI_UP) + '"/><polygon points="' + pts(TRI_DN) + '"/></g></mask>' +
   '<polygon class="rim" points="' + pts(TRI_UP) + '"/><polygon class="rim" points="' + pts(TRI_DN) + '"/>' +
   '<polygon class="tray" style="fill:url(#gBoard);stroke:url(#gBoard)" points="' + pts(TRI_UP) + '"/><polygon class="tray" style="fill:url(#gBoard);stroke:url(#gBoard)" points="' + pts(TRI_DN) + '"/>' +
-  '<rect x="-204" y="-236" width="408" height="472" filter="url(#grain)" clip-path="url(#starClip)"/>';
+  '<g mask="url(#trayMask)">' + ZONES.map(z => '<polygon fill="' + ZONE_COL[z.col] + '" stroke="' + ZONE_COL[z.col] + '" stroke-width="35" stroke-linejoin="round" points="' + z.hull.map(p => f1(p.x) + ',' + f1(p.y)).join(' ') + '"/>').join('') +
+  '<polygon fill="url(#gBoard)" points="' + [0, 1, 2, 3, 4, 5].map(k => { const a = k * Math.PI / 3; return f1(5 * D * Math.cos(a)) + ',' + f1(5 * D * Math.sin(a)); }).join(' ') + '"/></g>' +
+  '<rect x="-204" y="-236" width="408" height="472" filter="url(#grain)" clip-path="url(#starClip)" opacity="0.5"/>';
+function linesMarkup(sg) {
+  let s = '<g class="gridl">';
+  for (let i = 0; i < CELLS.length; i++) for (let d = 0; d < 6; d++) {
+    const j = NB[i * 6 + d]; if (j > i) s += '<line x1="' + f1(POS[i].x * sg) + '" y1="' + f1(POS[i].y * sg) + '" x2="' + f1(POS[j].x * sg) + '" y2="' + f1(POS[j].y * sg) + '"/>';
+  }
+  return s + '</g>';
+}
 /* 별판은 180도 돌려도 같은 모양이라, 파랑 좌석은 칸 좌표만 뒤집어 그린다 */
 function holesMarkup(sg) {
-  let s = '';
+  let s = linesMarkup(sg);
   CELLS.forEach((c, i) => {
     const x = f1(POS[i].x * sg), y = f1(POS[i].y * sg);
-    s += '<circle class="holerim" cx="' + x + '" cy="' + f1(y + 1) + '" r="12"/>';
-    s += '<circle class="hole" cx="' + x + '" cy="' + y + '" r="11"/>';
-    if (c.z >= 5) s += '<circle class="tint1" cx="' + x + '" cy="' + y + '" r="11"/>';
-    else if (c.z <= -5) s += '<circle class="tint2" cx="' + x + '" cy="' + y + '" r="11"/>';
+    s += '<circle class="hole" cx="' + x + '" cy="' + y + '" r="11"/><circle class="hdot" cx="' + x + '" cy="' + y + '" r="1.6"/>';
   });
   return s;
 }
@@ -870,7 +899,8 @@ function onModeChange() {
 function miniStar() {
   let s = '<svg viewBox="-204 -236 408 472" width="60" height="69" aria-hidden="true">';
   CELLS.forEach((c, i) => {
-    s += '<circle cx="' + POS[i].x + '" cy="' + POS[i].y + '" r="12.5" class="' + (c.z >= 5 ? 'm1' : c.z <= -5 ? 'm2' : 'm0') + '"/>';
+    const zn = ZONES.find(z => z.idx.indexOf(i) >= 0);
+    s += '<circle cx="' + POS[i].x + '" cy="' + POS[i].y + '" r="11" fill="' + (zn ? ZONE_COL[zn.col] : '#F5F3EA') + '" stroke="#26302B" stroke-width="2.4"/>';
   });
   return s + '</svg>';
 }

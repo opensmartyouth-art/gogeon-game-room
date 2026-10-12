@@ -32,8 +32,8 @@
   --blue-ink: #213E7B;
   --blue-hi: #A6C4F7;
   --blue-lo: #172E66;
-  --board-hi: #3F5A4D;
-  --board-lo: #1B2822;
+  --board-hi: #FBFAF3;
+  --board-lo: #EEEBDF;
   --hole-rim: rgba(255,255,255,0.12);
   --gold: #E0A92E;
   --wood-hi: #E6C583; --wood-lo: #C99A55; --wood-line: #5B3F1E;
@@ -45,7 +45,7 @@
   :root:not([data-theme="light"]) {
     --bg: #0F1512; --surface: #18211D; --ink: #E4EBE6; --ink-2: #97A59D; --line: #2B3732;
     --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
-    --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
+    --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #F4F2E8; --board-lo: #E6E3D6; --hole-rim: rgba(255,255,255,0.09);
     --gold: #EBBF52; --accent: #7BC4A7;
     --wood-hi: #A98450; --wood-lo: #86642F; --wood-line: #2B1D0D;
     color-scheme: dark;
@@ -54,7 +54,7 @@
 :root[data-theme="dark"] {
   --bg: #0F1512; --surface: #18211D; --ink: #E4EBE6; --ink-2: #97A59D; --line: #2B3732;
   --board: #22312A; --board-edge: #3A4E44; --hole: #101914;
-  --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #34493E; --board-lo: #131C17; --hole-rim: rgba(255,255,255,0.09);
+  --red: #EC5A41; --red-ink: #B53823; --red-hi: #FFB19B; --red-lo: #8F2A1A; --blue: #6592E3; --blue-ink: #3A62AE; --blue-hi: #B5CEFB; --blue-lo: #1E3C80; --board-hi: #F4F2E8; --board-lo: #E6E3D6; --hole-rim: rgba(255,255,255,0.09);
   --gold: #EBBF52; --accent: #7BC4A7;
   --wood-hi: #A98450; --wood-lo: #86642F; --wood-line: #2B1D0D;
   color-scheme: dark;
@@ -126,10 +126,11 @@ button { font-family: inherit; }
 .say { min-height: 26px; margin: 10px 2px 8px; font-weight: 500; text-wrap: pretty; }
 .boardwrap { position: relative; }
 #board { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.rim { fill: color-mix(in srgb, var(--gold) 72%, var(--board-edge)); stroke: color-mix(in srgb, var(--gold) 72%, var(--board-edge)); stroke-width: 40; stroke-linejoin: round; }
+.rim { fill: #26302B; stroke: #26302B; stroke-width: 38; stroke-linejoin: round; }
 .tray { fill: var(--board); stroke: var(--board); stroke-width: 35; stroke-linejoin: round; }
-.hole { fill: url(#gHole); }
-.holerim { fill: var(--hole-rim); }
+.hole { fill: #FFFEFA; stroke: #26302B; stroke-width: 1.4; }
+.hdot { fill: #26302B; }
+.gridl line { stroke: #26302B; stroke-width: 1; stroke-opacity: 0.8; }
 .tray, .rim { }
 .inlay { fill: none; stroke: var(--gold); stroke-width: 1.3; stroke-linejoin: round; opacity: 0.6; }
 .halo { fill: none; stroke: var(--gold); stroke-width: 1.6; animation: halo 1.8s ease-in-out infinite; }
