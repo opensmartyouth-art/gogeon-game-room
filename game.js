@@ -57,7 +57,7 @@ function holesMarkup(sg) {
   let s = linesMarkup(sg);
   CELLS.forEach((c, i) => {
     const x = f1(POS[i].x * sg), y = f1(POS[i].y * sg);
-    s += '<circle class="hole" cx="' + x + '" cy="' + y + '" r="11"/><circle class="hdot" cx="' + x + '" cy="' + y + '" r="1.6"/>';
+    s += '<rect class="hole" x="' + f1(x - 9) + '" y="' + f1(y - 9) + '" width="18" height="18"/>';
   });
   return s;
 }
@@ -900,7 +900,7 @@ function miniStar() {
   let s = '<svg viewBox="-204 -236 408 472" width="60" height="69" aria-hidden="true">';
   CELLS.forEach((c, i) => {
     const zn = ZONES.find(z => z.idx.indexOf(i) >= 0);
-    s += '<circle cx="' + POS[i].x + '" cy="' + POS[i].y + '" r="11" fill="' + (zn ? ZONE_COL[zn.col] : '#F5F3EA') + '" stroke="#26302B" stroke-width="2.4"/>';
+    s += '<rect x="' + (POS[i].x - 9) + '" y="' + (POS[i].y - 9) + '" width="18" height="18" fill="' + (zn ? ZONE_COL[zn.col] : '#F5F3EA') + '" stroke="#26302B" stroke-width="2.4"/>';
   });
   return s + '</svg>';
 }
