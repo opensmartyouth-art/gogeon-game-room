@@ -257,6 +257,77 @@ button { font-family: inherit; }
   .pclose { min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 14px; cursor: pointer; }
   .panel .settings { margin-top: 8px; }
 }
+
+/* 튜토리얼 */
+.top .tutq { margin-left: auto; width: 40px; min-height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); font-size: 17px; font-weight: 700; cursor: pointer; flex: none; }
+.top .tutq + .gear { margin-left: 0; }
+.tutagain { align-self: flex-start; margin-top: 14px; }
+.tutbg { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(10, 18, 14, 0.62); }
+.tutbg[hidden] { display: none; }
+.tcard { position: relative; width: min(420px, 100%); max-height: 100%; overflow: auto; padding: 18px 18px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 18px 50px rgba(0,0,0,0.35); }
+.tart { border-radius: 14px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); }
+.tart svg { display: block; }
+.tstep { margin: 14px 0 2px; font-size: 12px; color: var(--ink-2); letter-spacing: 0.04em; }
+.ttitle { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.25; }
+.tdesc { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink); text-wrap: pretty; min-height: 72px; }
+.tdesc b { font-weight: 600; }
+.tdots { display: flex; gap: 6px; justify-content: center; margin: 14px 0 8px; }
+.tdots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.tdots i.on { background: var(--ink); width: 18px; border-radius: 4px; }
+.tmust { margin: 0 0 8px; text-align: center; font-size: 12.5px; color: var(--ink-2); }
+.tmust[hidden] { display: none; }
+.trow { display: flex; gap: 10px; }
+.trow .btn { flex: 1; }
+.trow .tprev[hidden] { display: none; }
+.tclose { position: absolute; top: 10px; right: 10px; min-height: 34px; padding: 0 12px; font-size: 13px; background: color-mix(in srgb, var(--bg) 82%, transparent); }
+.tclose[hidden] { display: none; }
+body.tutopen { overflow: hidden; }
+.tpulse { animation: dp 1.4s ease-in-out infinite; }
+.tlift { animation: tlift 1.6s ease-in-out infinite; }
+@keyframes tlift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* 승경도 */
+#sboard { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.sbase { fill: var(--board); stroke: var(--gold); stroke-width: 1.5; }
+.spath { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linejoin: round; opacity: 0.42; stroke-dasharray: 2 6; stroke-linecap: round; }
+.stbody { fill: #F2EAD6; stroke: #8A7550; stroke-width: 1; }
+.stile.goal .stbody { fill: #FBE9B5; stroke: var(--gold); stroke-width: 2; }
+.stgr { font-size: 9.5px; font-weight: 700; fill: #fff; text-anchor: middle; }
+.stnm { font-size: 14.5px; font-weight: 700; fill: #2B2418; text-anchor: middle; font-family: var(--font-display); }
+.stev.good { fill: #CFE6D2; } .stev.bad { fill: #F4CFC7; }
+.stevt { font-size: 7.6px; font-weight: 700; fill: #2B2418; text-anchor: middle; }
+.stflag { font-size: 11px; font-weight: 700; fill: #6B5A38; text-anchor: middle; }
+.stflag.goalt { fill: #B07A00; }
+.stile.okflash .stbody { animation: okf 700ms ease-out; }
+.stile.badflash .stbody { animation: badf 700ms ease-out; }
+@keyframes okf { 0%, 100% { fill: #F2EAD6; } 30% { fill: #9ED9A8; } }
+@keyframes badf { 0%, 100% { fill: #F2EAD6; } 30% { fill: #F0A394; } }
+.stk { transition: transform 150ms ease-out; will-change: transform; }
+.spc1 { fill: url(#gSR); stroke: var(--red-ink); stroke-width: 1.2; }
+.spc2 { fill: url(#gSB); stroke: var(--blue-ink); stroke-width: 1.2; }
+.stsh { fill: rgba(0,0,0,0.35); }
+.sshine { fill: #fff; opacity: 0.8; }
+.sact { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+.yun { flex: none; display: grid; place-items: center; width: 92px; height: 56px; border-radius: 22px; background: linear-gradient(180deg, #D8AE72, #B98648); border: 2px solid #6B4A22; box-shadow: inset 0 6px 8px rgba(255,255,255,0.22), 0 4px 10px rgba(0,0,0,0.25); }
+.yun span { font-size: 32px; font-weight: 800; color: #3B2A12; line-height: 1; font-variant-numeric: tabular-nums; }
+.yun.rolling { animation: yshake 220ms linear infinite; }
+.yun.landed { animation: ylanded 360ms ease-out; }
+@keyframes yshake { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-3px); } }
+@keyframes ylanded { 0% { transform: scale(1.2); } 100% { transform: scale(1); } }
+.sbtns { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.sbtns .btn { width: 100%; }
+.btn.big { min-height: 52px; font-size: 17px; }
+.swait { margin: 0; color: var(--ink-2); font-size: 14px; }
+.swait[hidden] { display: none; }
+@media (orientation: landscape) and (max-height: 600px) {
+  #view-seung .boardwrap { grid-row: 1 / span 4; width: min(58vw, calc((100vh - 64px) * 1.395), calc((100dvh - 64px) * 1.395), 560px); }
+  #view-seung .sact { grid-column: 2; grid-row: 3; margin-top: 4px; }
+  #view-seung .side { grid-row: 4; }
+  .yun { width: 76px; height: 46px; } .yun span { font-size: 26px; }
+  .btn.big { min-height: 46px; }
+  .tcard { max-height: 94dvh; } .tart svg { height: 110px; } .tdesc { min-height: 0; font-size: 14px; }
+}
+@media (max-width: 400px) { .top { gap: 8px; } .gtitle { font-size: 22px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -274,6 +345,7 @@ button { font-family: inherit; }
     <div class="top">
       <button type="button" class="back" id="back">← 홈</button>
       <h2 class="gtitle">다이아몬드 게임</h2>
+      <button type="button" class="tutq tutbtn" data-t="diamond" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
       <button type="button" class="gear" data-p="panel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -317,6 +389,7 @@ button { font-family: inherit; }
         <div class="panel" id="panel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
           <div class="online" id="online" hidden></div>
           <div class="settings" id="settings"></div>
+          <button type="button" class="btn tutbtn tutagain" data-t="diamond">튜토리얼 다시 보기</button>
         </div>
         <details class="rules" id="rules">
           <summary>규칙</summary>
@@ -334,6 +407,7 @@ button { font-family: inherit; }
     <div class="top">
       <button type="button" class="back" id="obk">← 홈</button>
       <h2 class="gtitle">오목</h2>
+      <button type="button" class="tutq tutbtn" data-t="omok" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
       <button type="button" class="gear" data-p="opanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -375,6 +449,7 @@ button { font-family: inherit; }
         <div class="panel" id="opanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
           <div class="online" id="oonline" hidden></div>
           <div class="settings" id="osettings"></div>
+          <button type="button" class="btn tutbtn tutagain" data-t="omok">튜토리얼 다시 보기</button>
         </div>
         <details class="rules" id="orules">
           <summary>규칙</summary>
@@ -388,11 +463,98 @@ button { font-family: inherit; }
       </div>
     </div>
   </section>
+  <section id="view-seung" hidden>
+    <div class="top">
+      <button type="button" class="back" id="sbk">← 홈</button>
+      <h2 class="gtitle">승경도</h2>
+      <button type="button" class="tutq tutbtn" data-t="seung" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="gear" data-p="spanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="spl1"><span class="dot p1"></span><div><b id="spn1">나</b><small id="sps1"></small></div></div>
+          <div class="pl" id="spl2"><span class="dot p2"></span><div><b id="spn2">컴퓨터</b><small id="sps2"></small></div></div>
+        </div>
+        <p class="say" id="ssay" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="sboard" viewBox="0 0 360 258" role="group" aria-label="승경도 말판. 종9품에서 정1품까지 관직 칸 열여덟 개">
+            <defs>
+              <radialGradient id="gSR" cx="0.36" cy="0.3" r="0.85"><stop offset="0" style="stop-color:var(--red-hi)"/><stop offset="0.5" style="stop-color:var(--red)"/><stop offset="1" style="stop-color:var(--red-lo)"/></radialGradient>
+              <radialGradient id="gSB" cx="0.36" cy="0.3" r="0.85"><stop offset="0" style="stop-color:var(--blue-hi)"/><stop offset="0.5" style="stop-color:var(--blue)"/><stop offset="1" style="stop-color:var(--blue-lo)"/></radialGradient>
+              <linearGradient id="gSGl" x1="0.2" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.4"/><stop offset="0.45" stop-color="#fff" stop-opacity="0.04"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            </defs>
+            <g id="sbg"></g><g id="stok"></g><g id="sfx" pointer-events="none"></g>
+          </svg>
+          <div class="result" id="sresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="srtitle"></p>
+              <p class="rsub" id="srsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="srAgain">한 판 더</button>
+                <button type="button" class="btn" id="srView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sact" id="sact">
+          <div class="yun" id="syun" aria-live="polite" aria-label="윤목"><span id="syn">–</span></div>
+          <div class="sbtns">
+            <button type="button" class="btn primary big" id="sroll" hidden>윤목 굴리기</button>
+            <button type="button" class="btn primary big" id="smove" hidden>이동하기</button>
+            <button type="button" class="btn" id="sreroll" hidden>상소로 다시 굴리기</button>
+            <p class="swait" id="swait" hidden></p>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="row">
+          <button type="button" class="btn primary" id="sagain">새 게임</button>
+          <p class="count" id="scount"></p>
+        </div>
+        <div class="panel" id="spanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="online" id="sonline" hidden></div>
+          <div class="settings" id="ssettings"></div>
+          <button type="button" class="btn tutbtn tutagain" data-t="seung">튜토리얼 다시 보기</button>
+        </div>
+        <details class="rules" id="srules">
+          <summary>규칙</summary>
+          <ol>
+            <li>말은 종9품에서 출발해요. 정1품 영의정에 먼저 오르면 이겨요.</li>
+            <li>내 차례에 윤목을 굴리면 1~5가 나오고, 나온 수만큼 관직 칸을 앞으로 가요.</li>
+            <li>결과가 마음에 안 들면 상소로 다시 굴릴 수 있어요. 한 판에 2번이고, 다시 나온 수는 따라야 해요.</li>
+            <li>암행어사(+3)·특진(+2)은 앞으로, 탄핵(−2)·사약(−3)·파직(−4)은 뒤로 가요. 귀양은 한 번 쉬고, 어명은 상소가 하나 늘어요.</li>
+            <li>상대가 서 있는 칸에 멈추면 상대를 2칸 뒤로 보내요.</li>
+            <li>전통 승경도를 바탕으로 현대식으로 다듬은 규칙이에요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<div id="tut" class="tutbg" hidden role="dialog" aria-modal="true" aria-labelledby="ttitle">
+  <div class="tcard">
+    <div class="tart"></div>
+    <p class="tstep"></p>
+    <h3 class="ttitle" id="ttitle"></h3>
+    <p class="tdesc"></p>
+    <div class="tdots"></div>
+    <p class="tmust">처음 한 번은 끝까지 봐 주세요.</p>
+    <div class="trow">
+      <button type="button" class="btn tprev">이전</button>
+      <button type="button" class="btn primary tnext">다음</button>
+    </div>
+    <button type="button" class="tclose btn" aria-label="닫기">닫기</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script src="core.js"></script>
 <script src="game.js"></script>
+<script src="tutorial.js"></script>
 <script src="omok.js"></script>
+<script src="seung.js"></script>
 </body>
 </html>

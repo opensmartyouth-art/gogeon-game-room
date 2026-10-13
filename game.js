@@ -874,6 +874,15 @@ function miniStar() {
   });
   return s + '</svg>';
 }
+function miniSeung() {
+  let s = '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">';
+  const cols = ['#3A66B8', '#3A66B8', '#2E6A56', '#B98616', '#C23B27'];
+  for (let k = 0; k < 5; k++) {
+    const h = 10 + k * 9;
+    s += '<rect x="' + (4 + k * 11) + '" y="' + (54 - h) + '" width="9" height="' + h + '" rx="2" fill="' + cols[k] + '"/>';
+  }
+  return s + '<circle cx="30" cy="27" r="4.6" fill="#D8472F" stroke="#98291A" stroke-width="1"/></svg>';
+}
 function miniOmok() {
   let s = '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">';
   for (let k = 0; k < 5; k++) {
@@ -892,6 +901,8 @@ const GAMES = [
     desc: '별 모양 판에서 내 구슬 10개를 반대편 진영으로 먼저 옮기면 이겨요. 구슬을 뛰어넘어 길게 이어 가는 게 핵심이에요.' },
   { id: 'hobak', name: '호박고누', ready: false, mini: miniDash, meta: '2인',
     desc: '한국 전통 고누예요. 규칙을 확정한 뒤에 추가해요.' },
+  { id: 'seung', name: '승경도', ready: true, mini: miniSeung, meta: '2인 · 컴퓨터 · 온라인 대전',
+    desc: '조선 관직 말판 놀이예요. 윤목을 굴려 종9품에서 영의정까지 먼저 오르세요. 상소로 다시 굴리고 상대를 견제해요.' },
   { id: 'omok', name: '오목', ready: true, mini: miniOmok, meta: '2인 · 컴퓨터 · 온라인 대전',
     desc: '돌 다섯 개를 먼저 한 줄로 이으면 이겨요. 손가락 위로 돌이 떠서, 놓을 자리를 가리지 않고 맞출 수 있어요.' }
 ];
@@ -910,20 +921,26 @@ function show(v) {
   $('#view-hub').hidden = v !== 'hub';
   $('#view-diamond').hidden = v !== 'diamond';
   const ov = $('#view-omok'); if (ov) ov.hidden = v !== 'omok';
+  const sv = $('#view-seung'); if (sv) sv.hidden = v !== 'seung';
   if (v === 'omok') {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.omokEnter) window.omokEnter();
   } else if (window.omokLeave) window.omokLeave();
+  if (v === 'seung') {
+    token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
+    if (window.seungEnter) window.seungEnter();
+  } else if (window.seungLeave) window.seungLeave();
   if (v === 'diamond') {
     if (S.busy && S.think) { S.busy = false; S.think = false; }
     render();
     maybeAI();
     tryRemote();
-  } else if (v !== 'omok') {
+  } else if (v !== 'omok' && v !== 'seung') {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }
   try { window.scrollTo(0, 0); } catch (e) { /* 무시 */ }
+  if (v !== 'hub' && window.Tut) window.Tut.enter(v);
 }
 
 /* ---------- 이벤트 ---------- */
