@@ -468,7 +468,7 @@ body { overflow-anchor: none; }
 .cdot.wait { animation: cwait 1.2s ease-in-out infinite; }
 @keyframes cwait { 50% { opacity: 0.35; } }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-@media (max-width: 560px) { .gtitle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .top .tutq { margin-left: auto; } }
+
 
 /* 하단 고정 바(폰 세로): 판을 최대한 크게 쓰고, 주요 버튼은 엄지 닿는 곳에 */
 @media (max-width: 819px) and (orientation: portrait) {
@@ -499,6 +499,12 @@ body { overflow-anchor: none; }
   .say { position: absolute; width: 1px; height: 1px; min-height: 0; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   #board { height: min(calc((100vw - 8px) * 1.157), max(300px, calc(100dvh - var(--dock-h, 90px) - 136px))); }
 }
+
+/* 아이콘만 쓰는 상단 버튼(48px) */
+.back, .gear, .top .tutq { width: 48px; height: 48px; min-height: 48px; padding: 0; flex: none; place-items: center; justify-content: center; }
+.back { display: inline-grid; }
+.top .tutq { display: inline-grid; font-size: 24px; font-weight: 700; line-height: 1; }
+.top .tutq + .gear { margin-left: 0; }
 </style>
 </head>
 <body>
@@ -520,10 +526,10 @@ body { overflow-anchor: none; }
 
   <section id="view-diamond" hidden>
     <div class="top">
-      <button type="button" class="back" id="back" data-ask="leave">← 게임 목록</button>
+      <button type="button" class="back" id="back" data-ask="leave" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">다이아몬드 게임</h2>
-      <button type="button" class="tutq tutbtn" data-t="diamond" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="panel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="diamond" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="panel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -576,10 +582,10 @@ body { overflow-anchor: none; }
 
   <section id="view-omok" hidden>
     <div class="top">
-      <button type="button" class="back" id="obk">← 게임 목록</button>
+      <button type="button" class="back" id="obk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">오목</h2>
-      <button type="button" class="tutq tutbtn" data-t="omok" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="opanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="omok" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="opanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -637,10 +643,10 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-hobak" hidden>
     <div class="top">
-      <button type="button" class="back" id="hbk">← 게임 목록</button>
+      <button type="button" class="back" id="hbk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">호박고누</h2>
-      <button type="button" class="tutq tutbtn" data-t="hobak" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="hpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="hobak" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="hpanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -696,10 +702,10 @@ body { overflow-anchor: none; }
 
   <section id="view-solitaire" hidden>
     <div class="top">
-      <button type="button" class="back" id="solbk">← 게임 목록</button>
+      <button type="button" class="back" id="solbk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">솔리테어</h2>
-      <button type="button" class="tutq tutbtn" data-t="solitaire" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="solpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="solitaire" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="solpanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -744,10 +750,10 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-yut" hidden>
     <div class="top">
-      <button type="button" class="back" id="ybk">← 게임 목록</button>
+      <button type="button" class="back" id="ybk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">윷놀이</h2>
-      <button type="button" class="tutq tutbtn" data-t="yut" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="ypanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="yut" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="ypanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
@@ -812,10 +818,10 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-seung" hidden>
     <div class="top">
-      <button type="button" class="back" id="sbk">← 게임 목록</button>
+      <button type="button" class="back" id="sbk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
       <h2 class="gtitle">승경도</h2>
-      <button type="button" class="tutq tutbtn" data-t="seung" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
-      <button type="button" class="gear" data-p="spanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+      <button type="button" class="tutq tutbtn" data-t="seung" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="spanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="layout">
       <div class="stage">
