@@ -245,6 +245,28 @@ button { font-family: inherit; }
 .hpc { pointer-events: none; } .hpc.can { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gold) 70%, transparent)); }
 .rtitle.wr { color: var(--red); } .rtitle.wbl { color: var(--blue); }
 
+/* 솔리테어 */
+.solwrap { position: relative; padding: 10px; border-radius: var(--r-xl); background: var(--board); border: 3px solid color-mix(in srgb, var(--gold) 72%, var(--board-edge)); }
+.solwrap .result { z-index: 500; }
+#solfield { position: relative; margin: 0 auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.sslot { position: absolute; display: grid; place-items: center; border-radius: 8px; border: 1.5px dashed rgba(250,249,245,0.2); color: rgba(250,249,245,0.22); line-height: 1; box-sizing: border-box; }
+.sslot .fs.rd { color: color-mix(in srgb, var(--red) 55%, transparent); } .sslot .fs.k { font-size: 0.5em; font-weight: 700; } .sslot .rec { font-size: 1em; }
+.sslot.stk { cursor: pointer; }
+.scard { position: absolute; box-sizing: border-box; border-radius: 8px; box-shadow: 0 1px 0 rgba(0,0,0,0.25), 0 3px 6px rgba(0,0,0,0.3); cursor: pointer; }
+.scard.up { background: #FAF9F5; border: 1px solid #D9D2C6; }
+.scard.up.rd { color: #C4503A; } .scard.up.bk { color: #1F1E1B; }
+.scard .cr { position: absolute; left: 7%; top: 3%; display: flex; flex-direction: column; align-items: center; font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+.scard .cr i { font-style: normal; font-size: 0.82em; margin-top: 1px; }
+.scard .cs { position: absolute; right: 9%; bottom: 4%; font-size: 1.9em; line-height: 1; }
+.scard.dn { background: var(--red); border: 1px solid var(--red-ink); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.14) 0 4px, transparent 4px 9px); }
+.scard.dn::after { content: ""; position: absolute; inset: 11%; border-radius: 5px; border: 1.5px solid rgba(255,255,255,0.45); }
+.scard.no { animation: solno 260ms ease-out; }
+@keyframes solno { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+#soldrag { position: absolute; z-index: 300; pointer-events: none; will-change: transform; }
+#soldrag .scard { box-shadow: 0 8px 18px rgba(0,0,0,0.45); }
+.sconf { position: absolute; width: 7px; height: 5px; z-index: 400; pointer-events: none; animation: sconf 1500ms cubic-bezier(0.15, 0.7, 0.35, 1) forwards; }
+@keyframes sconf { to { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; } }
+
 /* 가로 화면(폰을 눕혔을 때): 판을 화면 높이에 맞추고 정보와 설정은 오른쪽 열로 */
 @media (orientation: landscape) and (max-height: 600px) {
   body { padding-block: 8px 16px; padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
@@ -584,6 +606,53 @@ body.tutopen { overflow: hidden; }
       </div>
     </div>
   </section>
+
+  <section id="view-solitaire" hidden>
+    <div class="top">
+      <button type="button" class="back" id="solbk">← 홈</button>
+      <h2 class="gtitle">솔리테어</h2>
+      <button type="button" class="gear" data-p="solpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <p class="say" id="solsay" aria-live="polite"></p>
+        <div class="boardwrap solwrap">
+          <div id="solfield" role="application" aria-label="솔리테어 판"></div>
+          <div class="result" id="solresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="solrtitle">클리어</p>
+              <p class="rsub" id="solrsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="solrAgain">한 판 더</button>
+                <button type="button" class="btn" id="solrView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="row">
+          <button type="button" class="btn" id="solundo">무르기</button>
+          <button type="button" class="btn primary" id="solauto" hidden>자동 완성</button>
+          <button type="button" class="btn" id="solnew">새 게임</button>
+          <p class="count" id="solcount"></p>
+        </div>
+        <div class="panel" id="solpanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="settings" id="solsettings"></div>
+        </div>
+        <details class="rules" id="solrules">
+          <summary>규칙</summary>
+          <ol>
+            <li>위 오른쪽 네 칸에 같은 무늬 카드를 A부터 K까지 차례로 쌓으면 이겨요.</li>
+            <li>아래 일곱 줄에는 색이 번갈아 가며 숫자가 하나씩 작아지게 쌓아요. 예를 들어 검정 7 위에 빨강 6을 놓아요.</li>
+            <li>빈 줄에는 K만 놓을 수 있어요. 줄의 맨 위 뒷면 카드는 앞 카드를 옮기면 저절로 뒤집혀요.</li>
+            <li>왼쪽 위 더미를 누르면 카드를 1장(또는 3장) 넘겨요. 다 넘기면 다시 눌러 처음부터 넘겨요.</li>
+            <li>카드를 누르면 갈 수 있는 곳으로 알아서 가고, 끌어서 원하는 줄에 놓을 수도 있어요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
   <section id="view-seung" hidden>
     <div class="top">
       <button type="button" class="back" id="sbk">← 홈</button>
@@ -680,5 +749,6 @@ body.tutopen { overflow: hidden; }
 <script src="omok.js"></script>
 <script src="seung.js"></script>
 <script src="hobak.js"></script>
+<script src="solitaire.js"></script>
 </body>
 </html>

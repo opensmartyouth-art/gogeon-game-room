@@ -1021,6 +1021,11 @@ function miniHobak() {
     '<path d="M12 6H48M12 54H48" ' + c + '/><circle cx="12" cy="6" r="3.6" fill="var(--blue)"/><circle cx="30" cy="6" r="3.6" fill="var(--blue)"/><circle cx="48" cy="6" r="3.6" fill="var(--blue)"/>' +
     '<circle cx="12" cy="54" r="3.6" fill="var(--red)"/><circle cx="30" cy="54" r="3.6" fill="var(--red)"/><circle cx="48" cy="54" r="3.6" fill="var(--red)"/></svg>';
 }
+function miniSolitaire() {
+  return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="5" y="10" width="30" height="42" rx="5" fill="var(--red)" stroke="var(--red-ink)" stroke-width="1.5" transform="rotate(-10 20 31)"/>' +
+    '<rect x="22" y="8" width="31" height="44" rx="5" fill="#FAF9F5" stroke="#B9B1A3" stroke-width="1.5" transform="rotate(8 37 30)"/>' +
+    '<text x="38" y="38" text-anchor="middle" font-size="22" fill="#1F1E1B" transform="rotate(8 37 30)">♠</text></svg>';
+}
 function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
@@ -1028,7 +1033,8 @@ const GAMES = [
   { id: 'diamond', name: '다이아몬드', sub: '먼저 건너가요', ready: true, mini: miniStar },
   { id: 'seung', name: '승경도', sub: '주사위로 승진해요', ready: true, mini: miniSeung },
   { id: 'omok', name: '오목', sub: '다섯 줄을 만들어요', ready: true, mini: miniOmok },
-  { id: 'hobak', name: '호박고누', sub: '막아서 이겨요', ready: true, mini: miniHobak }
+  { id: 'hobak', name: '호박고누', sub: '막아서 이겨요', ready: true, mini: miniHobak },
+  { id: 'solitaire', name: '솔리테어', sub: '카드를 모두 쌓아요', ready: true, mini: miniSolitaire }
 ];
 function renderHub() {
   $('#games').innerHTML = GAMES.map(g =>
@@ -1046,6 +1052,7 @@ function show(v) {
   const ov = $('#view-omok'); if (ov) ov.hidden = v !== 'omok';
   const sv = $('#view-seung'); if (sv) sv.hidden = v !== 'seung';
   const hv = $('#view-hobak'); if (hv) hv.hidden = v !== 'hobak';
+  const lv = $('#view-solitaire'); if (lv) lv.hidden = v !== 'solitaire';
   if (v === 'omok') {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.omokEnter) window.omokEnter();
@@ -1058,12 +1065,16 @@ function show(v) {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.hobakEnter) window.hobakEnter();
   } else if (window.hobakLeave) window.hobakLeave();
+  if (v === 'solitaire') {
+    token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
+    if (window.solitaireEnter) window.solitaireEnter();
+  } else if (window.solitaireLeave) window.solitaireLeave();
   if (v === 'diamond') {
     if (S.busy && S.think) { S.busy = false; S.think = false; }
     render();
     maybeAI();
     tryRemote();
-  } else if (v !== 'omok' && v !== 'seung' && v !== 'hobak') {
+  } else if (v !== 'omok' && v !== 'seung' && v !== 'hobak' && v !== 'solitaire') {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }
