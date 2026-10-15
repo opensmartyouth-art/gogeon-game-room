@@ -17,7 +17,7 @@
     15: { k: 'dn', n: -3, t: '사약', s: '−3', say: '사약이 내려왔어요! 3칸 물러나요.' }
   };
   const gradeNo = i => +TILES[i][0][1];
-  const tierColor = i => { const g = gradeNo(i); return g >= 7 ? '#3A66B8' : g >= 5 ? '#2E6A56' : g >= 3 ? '#B98616' : '#C23B27'; };
+  const tierColor = i => { const g = gradeNo(i); return g >= 7 ? '#4F7DBF' : g >= 5 ? '#5DB8A6' : g >= 3 ? '#C98A3A' : '#A9583E'; };
   const tilePos = i => {
     const r = (i / COLS) | 0, c0 = i % COLS, col = r % 2 === 0 ? c0 : COLS - 1 - c0;
     return { x: MX + col * (TW + GX), y: MY + (2 - r) * (TH + GY), r, col };
@@ -314,7 +314,7 @@
   }
   function confetti() {
     const l = q('#sfx'); if (!l || reduceMotion) return;
-    const cols = ['#D8472F', '#3A66B8', '#E0A92E', '#EDEFE8', '#2E6A56'];
+    const cols = ['#CC785C', '#4F7DBF', '#E8A55A', '#FAF9F5', '#5DB8A6'];
     for (let k = 0; k < 44; k++) {
       const r = document.createElementNS(NS, 'rect');
       const ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 130;

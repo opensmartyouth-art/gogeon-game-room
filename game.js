@@ -262,7 +262,7 @@ function rippleAt(i) {
 }
 function confetti() {
   if (reduceMotion) return;
-  const cols = ['#D8472F', '#3A66B8', '#E0A92E', '#EDEFE8', '#2E6A56'];
+  const cols = ['#CC785C', '#4F7DBF', '#E8A55A', '#FAF9F5', '#5DB8A6'];
   for (let k = 0; k < 44; k++) {
     const r = document.createElementNS(NS, 'rect');
     const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 150;
@@ -876,12 +876,12 @@ function miniStar() {
 }
 function miniSeung() {
   let s = '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">';
-  const cols = ['#3A66B8', '#3A66B8', '#2E6A56', '#B98616', '#C23B27'];
+  const cols = ['#4F7DBF', '#4F7DBF', '#5DB8A6', '#C98A3A', '#A9583E'];
   for (let k = 0; k < 5; k++) {
     const h = 10 + k * 9;
     s += '<rect x="' + (4 + k * 11) + '" y="' + (54 - h) + '" width="9" height="' + h + '" rx="2" fill="' + cols[k] + '"/>';
   }
-  return s + '<circle cx="30" cy="27" r="4.6" fill="#D8472F" stroke="#98291A" stroke-width="1"/></svg>';
+  return s + '<circle cx="30" cy="27" r="4.6" fill="#CC785C" stroke="#A9583E" stroke-width="1"/></svg>';
 }
 function miniOmok() {
   let s = '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">';

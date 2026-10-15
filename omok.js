@@ -193,7 +193,7 @@
   }
   function fxConfetti() {
     const l = q('#ofx'); if (!l || reduceMotion) return;
-    const cols = ['#D8472F', '#3A66B8', '#E0A92E', '#EDEFE8', '#2E6A56'];
+    const cols = ['#CC785C', '#4F7DBF', '#E8A55A', '#FAF9F5', '#5DB8A6'];
     for (let k = 0; k < 44; k++) {
       const r = document.createElementNS(NS, 'rect');
       const ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 110;

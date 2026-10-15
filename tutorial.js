@@ -11,7 +11,7 @@
   const arc = (x1, x2, y) => '<path d="M' + x1 + ' ' + y + ' Q' + ((x1 + x2) / 2) + ' ' + (y - 34) + ' ' + x2 + ' ' + y + '" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>' +
     '<path d="M' + (x2 - 7) + ' ' + (y - 9) + ' L' + x2 + ' ' + y + ' L' + (x2 - 10) + ' ' + (y - 1) + '" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
   const lbl = (x, y, t, anchor, c) => '<text x="' + x + '" y="' + y + '" text-anchor="' + (anchor || 'middle') + '" font-size="12" font-weight="600" fill="' + (c || 'var(--ink-2)') + '">' + t + '</text>';
-  const PL = '#C7D3CB';
+  const PL = '#D9D5CC';
   const panel = inner => '<rect x="4" y="4" width="272" height="142" rx="14" fill="var(--board-lo)" opacity="0.9"/>' + inner;
 
   /* ----- 다이아몬드 ----- */
