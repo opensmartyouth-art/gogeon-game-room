@@ -407,6 +407,30 @@ body.tutopen { overflow: hidden; }
 }
 @media (max-width: 400px) { .top { gap: 8px; } .gtitle { font-size: 22px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* 윷놀이 */
+#yboard { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+#yboard .ypc.can { cursor: pointer; }
+#yboard .ypc.sel circle:nth-of-type(1) { stroke: var(--gold); stroke-width: 3; }
+#yboard .yhit { fill: color-mix(in srgb, var(--gold) 30%, transparent); stroke: var(--gold); stroke-width: 2.6; stroke-dasharray: 5 4; cursor: pointer; }
+.ythrowbox { display: grid; grid-template-columns: 138px 1fr; gap: 12px; align-items: center; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--card); }
+#ysticks { width: 100%; height: auto; display: block; }
+.ystick rect:first-child { fill: #C9985A; stroke: #6B4A22; stroke-width: 2; }
+.ystick.flat rect:first-child { fill: #E6C48C; }
+.ystick.round rect:first-child { fill: #8B5E2B; }
+.ythr { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ylast { margin: 0; min-height: 28px; font-family: var(--font-display); font-size: 26px; line-height: 1.1; color: var(--accent); }
+.ychips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; align-items: center; }
+.ychip { min-width: 44px; min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-weight: 800; font-size: 15px; cursor: pointer; }
+.ychip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ychip:disabled { opacity: 0.55; cursor: default; }
+.ynone { color: var(--ink-2); font-size: 12px; }
+.ytrays { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.ytray { font-variant-numeric: tabular-nums; }
+.ytray.t1 { border-color: color-mix(in srgb, var(--red) 50%, var(--line)); }
+.ytray.t2 { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
+.ytray.sel { box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 45%, transparent); }
+@keyframes ytoss { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-14px) rotate(8deg); } 100% { transform: none; } }
 </style>
 </head>
 <body>
@@ -657,6 +681,74 @@ body.tutopen { overflow: hidden; }
       </div>
     </div>
   </section>
+  <section id="view-yut" hidden>
+    <div class="top">
+      <button type="button" class="back" id="ybk">← 홈</button>
+      <h2 class="gtitle">윷놀이</h2>
+      <button type="button" class="tutq tutbtn" data-t="yut" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="gear" data-p="ypanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="ypl1"><span class="dot p1"></span><div><b id="ypn1">빨강</b><small id="yps1"></small></div></div>
+          <div class="pl" id="ypl2"><span class="dot p2"></span><div><b id="ypn2">파랑</b><small id="yps2"></small></div></div>
+        </div>
+        <p class="say" id="ysay" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="yboard" viewBox="0 0 320 320" role="group" aria-label="윷판. 바깥 스무 칸과 지름길">
+            <defs>
+              <radialGradient id="gYR" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#F0B49C"/><stop offset="0.55" stop-color="#CC785C"/><stop offset="1" stop-color="#A9583E"/></radialGradient>
+              <radialGradient id="gYB" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#A9C3EA"/><stop offset="0.55" stop-color="#4F7DBF"/><stop offset="1" stop-color="#34598F"/></radialGradient>
+            </defs>
+            <g id="ybg"></g><g id="ydyn"></g>
+          </svg>
+          <div class="result" id="yresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="yrtitle"></p>
+              <p class="rsub" id="yrsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="yrAgain">한 판 더</button>
+                <button type="button" class="btn" id="yrView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ythrowbox">
+          <svg id="ysticks" viewBox="0 0 184 86" aria-label="윷가락 네 개"></svg>
+          <div class="ythr">
+            <p class="ylast" id="ylast" aria-live="polite"></p>
+            <div class="ychips" id="ychips"></div>
+            <button type="button" class="btn primary" id="ythrow">윷 던지기</button>
+          </div>
+        </div>
+        <div class="ytrays">
+          <button type="button" class="btn ytray t1" id="ytray1">대기 말</button>
+          <button type="button" class="btn ytray t2" id="ytray2">대기 말</button>
+        </div>
+      </div>
+      <div class="side">
+        <div class="row">
+          <button type="button" class="btn primary" id="yagain">새 게임</button>
+          <p class="count" id="ycount"></p>
+        </div>
+        <div class="panel" id="ypanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="settings" id="ysettings"></div>
+          <button type="button" class="btn tutbtn tutagain" data-t="yut">튜토리얼 다시 보기</button>
+        </div>
+        <details class="rules" id="yrules">
+          <summary>규칙</summary>
+          <ol>
+            <li>윷가락 네 개를 던져 평평한 면이 나온 개수로 도(1)·개(2)·걸(3)·윷(4), 모는 다 엎어졌을 때(5)예요.</li>
+            <li>윷이나 모가 나오면 한 번 더 던져요. 나온 윷은 쌓아 두었다가 원하는 순서로 써요.</li>
+            <li>말을 누르면 갈 곳이 표시돼요. 도착점을 눌러 확정하세요. 모서리나 가운데에 서면 지름길로 갈 수 있어요.</li>
+            <li>상대 말이 있는 칸에 도착하면 잡아서 처음으로 돌려보내고 한 번 더 던져요. 내 말이 있는 칸에 서면 업어서 함께 가요.</li>
+            <li>말을 모두 한 바퀴 돌려 먼저 도착시키면 이겨요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
   <section id="view-seung" hidden>
     <div class="top">
       <button type="button" class="back" id="sbk">← 홈</button>
@@ -754,5 +846,6 @@ body.tutopen { overflow: hidden; }
 <script src="seung.js"></script>
 <script src="hobak.js"></script>
 <script src="solitaire.js"></script>
+<script src="yut.js"></script>
 </body>
 </html>

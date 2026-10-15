@@ -175,6 +175,33 @@
     '<g font-size="13" font-weight="700">' + ['되돌리기로 한 수 취소', '자동 완성으로 마무리', '1장 / 3장 뽑기는 설정에서'].map((t, i) =>
       '<rect x="40" y="' + (22 + i * 38) + '" width="200" height="30" rx="15" fill="var(--surface)" stroke="var(--line)"/><text x="140" y="' + (42 + i * 38) + '" text-anchor="middle" fill="var(--ink)">' + t + '</text>').join('') + '</g>');
 
+
+  /* ----- 윷놀이 ----- */
+  const ystk = (x, flat) => '<rect x="' + x + '" y="30" width="26" height="70" rx="13" fill="' + (flat ? '#E6C48C' : '#8B5E2B') + '" stroke="#6B4A22" stroke-width="2"/>' + (flat ? '<path d="M' + (x + 6) + ' 52h14M' + (x + 6) + ' 65h14M' + (x + 6) + ' 78h14" stroke="#8A6A3A" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>' : '');
+  const yutThrow = () => W(panel(
+    ystk(36, 1) + ystk(76, 1) + ystk(116, 0) + ystk(156, 0) +
+    lbl(232, 62, '평평한 면 2개', 'middle', PL) + lbl(232, 84, '= 개 (2칸)', 'middle', 'var(--gold)') +
+    lbl(120, 126, '도1 · 개2 · 걸3 · 윷4 · 모5(모두 엎어짐)', 'middle', PL)));
+  const yutBoardArt = (extra) => {
+    const a = 30, b = 120, c = 75;
+    let s = '<rect x="' + (a + 50) + '" y="14" width="' + (b - a) + '" height="' + (b - a) + '" rx="3" fill="none" stroke="#8A8478" stroke-width="2.4"/>';
+    const X = a + 50, Y = 14, S = b - a;
+    s += '<path d="M' + X + ' ' + Y + 'L' + (X + S) + ' ' + (Y + S) + 'M' + (X + S) + ' ' + Y + 'L' + X + ' ' + (Y + S) + '" stroke="#8A8478" stroke-width="2.4"/>';
+    [[X, Y], [X + S, Y], [X, Y + S], [X + S, Y + S], [X + S / 2, Y + S / 2]].forEach(p => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="#2B2926" stroke="#8A8478" stroke-width="1.6"/>'; });
+    return s + (extra ? extra(X, Y, S) : '');
+  };
+  const yutGoal = () => W(panel(yutBoardArt((X, Y, S) =>
+    marble(X + S, Y + S, 'red') + '<path d="M' + (X + S) + ' ' + (Y + S - 14) + ' L' + (X + S) + ' ' + Y + ' L' + X + ' ' + Y + ' L' + X + ' ' + (Y + S) + ' L' + (X + S - 14) + ' ' + (Y + S) + '" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>') +
+    lbl(46, 70, '출발', 'middle', PL) + lbl(46, 88, '도착', 'middle', PL) + lbl(236, 74, '한 바퀴', 'middle', 'var(--gold)') + lbl(236, 92, '먼저 돌리기', 'middle', PL)));
+  const yutShort = () => W(panel(yutBoardArt((X, Y, S) =>
+    marble(X + S, Y, 'red') + '<path d="M' + (X + S - 10) + ' ' + (Y + 10) + ' L' + (X + S / 2 + 8) + ' ' + (Y + S / 2 - 8) + ' M' + (X + S / 2 - 8) + ' ' + (Y + S / 2 + 8) + ' L' + (X + 10) + ' ' + (Y + S - 10) + '" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 4"/>') +
+    lbl(236, 60, '모서리에 서면', 'middle', 'var(--gold)') + lbl(236, 78, '지름길로 가요', 'middle', PL)));
+  const yutCap = () => W(panel(
+    marble(70, 70, 'red') + marble(150, 70, 'blue') +
+    '<path d="M84 60 C 104 36 126 36 144 58" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>' +
+    lbl(150, 106, '잡히면 처음으로', 'middle', PL) + lbl(232, 56, '잡으면', 'middle', 'var(--gold)') + lbl(232, 74, '한 번 더!', 'middle', 'var(--gold)') +
+    lbl(70, 106, '내 말', 'middle', PL)));
+
   const STEPS = {
     diamond: [
       { t: '목표', d: '별 모양 판에서 <b>내 구슬 10개</b>를 <b>반대편 삼각형 진영</b>으로 먼저 옮기면 이겨요.', a: diaGoal },
@@ -200,6 +227,12 @@
       { t: '움직이기', d: '말을 누르면 갈 수 있는 곳에 <b>노란 점</b>이 떠요. 선을 따라 <b>이웃한 빈 점</b>으로 한 칸씩 가요. 번갈아 한 번씩 움직여요.', a: hbMove },
       { t: '돌아갈 수 없어요', d: '한 번 <b>집을 떠난 말</b>은 내 집이든 상대 집이든 <b>다시 들어갈 수 없어요</b>. 아직 집에 있는 말만 집에 머물러요.', a: hbNoBack },
       { t: '막아서 이겨요', d: '내 차례에 <b>움직일 수 있는 말이 하나도 없으면</b> 져요. 100수가 넘도록 승부가 안 나면 비겨요.', a: hbBlock }
+    ],
+    yut: [
+      { t: '윷 던지기', d: '<b>윷 던지기</b> 버튼으로 윷가락 네 개를 던져요. 평평한 면이 나온 수가 도(1)·개(2)·걸(3)·윷(4)이고, 모두 엎어지면 <b>모(5)</b>예요.', a: yutThrow },
+      { t: '말 움직이기', d: '말을 누르면 갈 곳이 <b>노란 표시</b>로 떠요. 그 표시를 눌러 확정해요. 윷이 여러 개 쌓였으면 쓸 윷을 먼저 골라요. <b>윷·모</b>가 나오면 한 번 더 던져요.', a: yutGoal },
+      { t: '지름길', d: '말이 <b>모서리</b>에 멈추면 다음에 갈 때 안쪽 <b>지름길</b>로 갈 수 있어요. 가운데에서도 도착 쪽으로 곧장 가요.', a: yutShort },
+      { t: '잡기와 업기', d: '상대 말이 있는 칸에 서면 <b>잡아서</b> 처음으로 돌려보내고 <b>한 번 더</b> 던져요. 내 말과 같은 칸에 서면 <b>업어서</b> 함께 가요. 말을 모두 먼저 도착시키면 이겨요.', a: yutCap }
     ],
     solitaire: [
       { t: '목표', d: '카드를 모두 <b>위쪽 네 칸</b>에 무늬별로 <b>A부터 K까지</b> 차례로 쌓으면 이겨요.', a: solGoal },
