@@ -1018,7 +1018,7 @@ function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
 const GAMES = [
-  { id: 'diamond', name: '다이아몬드 게임', sub: '먼저 건너가요', ready: true, mini: miniStar },
+  { id: 'diamond', name: '다이아몬드', sub: '먼저 건너가요', ready: true, mini: miniStar },
   { id: 'seung', name: '승경도', sub: '주사위로 승진해요', ready: true, mini: miniSeung },
   { id: 'omok', name: '오목', sub: '다섯 줄을 만들어요', ready: true, mini: miniOmok },
   { id: 'hobak', name: '호박고누', sub: '곧 만나요', ready: false, mini: miniDash }
