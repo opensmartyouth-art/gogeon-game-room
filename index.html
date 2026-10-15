@@ -230,6 +230,21 @@ button { font-family: inherit; }
 .oripple { fill: none; stroke: var(--gold); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; animation: ripple 520ms ease-out forwards; }
 .rtitle.wb { color: var(--ink); } .rtitle.ww { color: var(--ink-2); }
 
+/* 호박고누 */
+#hboard { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.hrim { fill: color-mix(in srgb, var(--gold) 70%, var(--board-edge)); }
+.hbd { fill: var(--board); }
+.hln { fill: none; stroke: #8A8378; stroke-width: 1.6; }
+.hnode { fill: #8A8378; } .hnode.head { fill: #A39C8F; }
+.hhit { fill: transparent; cursor: pointer; outline: none; }
+.hhit:focus-visible { stroke: var(--gold); stroke-width: 2; }
+.htarget { fill: color-mix(in srgb, var(--gold) 22%, transparent); stroke: var(--gold); stroke-width: 1.6; stroke-dasharray: 3 3; pointer-events: none; }
+.hsel { fill: none; stroke: var(--gold); stroke-width: 2.2; pointer-events: none; }
+.hlastm { fill: none; stroke: var(--gold); stroke-width: 1.6; opacity: 0.8; pointer-events: none; }
+.hlastl { stroke: var(--gold); stroke-width: 1.6; opacity: 0.5; stroke-dasharray: 2 4; pointer-events: none; }
+.hpc { pointer-events: none; } .hpc.can { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gold) 70%, transparent)); }
+.rtitle.wr { color: var(--red); } .rtitle.wbl { color: var(--blue); }
+
 /* 가로 화면(폰을 눕혔을 때): 판을 화면 높이에 맞추고 정보와 설정은 오른쪽 열로 */
 @media (orientation: landscape) and (max-height: 600px) {
   body { padding-block: 8px 16px; padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
@@ -239,7 +254,7 @@ button { font-family: inherit; }
   .layout { grid-template-columns: auto minmax(0, 1fr); gap: 4px 20px; align-items: start; }
   .stage { display: contents; }
   .boardwrap { grid-column: 1; grid-row: 1 / span 3; align-self: start; position: sticky; top: 6px; width: fit-content; }
-  #board, #oboard { height: calc(100vh - 70px); height: calc(100dvh - 70px); width: auto; max-width: 56vw; }
+  #board, #oboard, #hboard { height: calc(100vh - 70px); height: calc(100dvh - 70px); width: auto; max-width: 56vw; }
   .players { grid-column: 2; grid-row: 1; }
   .say { grid-column: 2; grid-row: 2; margin: 4px 2px; min-height: 0; }
   .side { grid-column: 2; grid-row: 3; position: static; }
@@ -513,6 +528,62 @@ body.tutopen { overflow: hidden; }
       </div>
     </div>
   </section>
+  <section id="view-hobak" hidden>
+    <div class="top">
+      <button type="button" class="back" id="hbk">← 홈</button>
+      <h2 class="gtitle">호박고누</h2>
+      <button type="button" class="gear" data-p="hpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="hpl1"><span class="dot p1"></span><div><b id="hpn1">나</b><small id="hps1"></small></div></div>
+          <div class="pl" id="hpl2"><span class="dot p2"></span><div><b id="hpn2">컴퓨터</b><small id="hps2"></small></div></div>
+        </div>
+        <p class="say" id="hsay" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="hboard" viewBox="0 0 320 400" role="group" aria-label="호박고누 판. 점 열한 개와 양쪽 끝의 집">
+            <defs>
+              <radialGradient id="gHR" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#F0B49C"/><stop offset="0.55" stop-color="#CC785C"/><stop offset="1" stop-color="#A9583E"/></radialGradient>
+              <radialGradient id="gHB" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#A9C3EA"/><stop offset="0.55" stop-color="#4F7DBF"/><stop offset="1" stop-color="#34598F"/></radialGradient>
+            </defs>
+            <g id="hbg"></g><g id="hdyn"></g><g id="hfx" pointer-events="none"></g>
+          </svg>
+          <div class="result" id="hresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="hrtitle"></p>
+              <p class="rsub" id="hrsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="hrAgain">한 판 더</button>
+                <button type="button" class="btn" id="hrView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side">
+        <div class="invite" id="hinv" hidden></div>
+        <div class="row">
+          <button type="button" class="btn" id="hundo">무르기</button>
+          <button type="button" class="btn primary" id="hagain">새 게임</button>
+          <p class="count" id="hcount"></p>
+        </div>
+        <div class="panel" id="hpanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="online" id="honline" hidden></div>
+          <div class="settings" id="hsettings"></div>
+        </div>
+        <details class="rules" id="hrules">
+          <summary>규칙</summary>
+          <ol>
+            <li>말은 각자 3개예요. 빨강이 먼저, 번갈아 가며 말 하나를 선을 따라 한 칸 옮겨요.</li>
+            <li>건너뛰거나 잡을 수는 없어요. 빈 점으로만 갈 수 있어요.</li>
+            <li>집(양쪽 끝의 세 점)을 한 번 떠난 말은 어느 집에도 다시 들어갈 수 없어요. 자기 집이든 상대 집이든 마찬가지예요.</li>
+            <li>상대가 움직일 수 없게 막으면 이겨요. 100수가 넘도록 승부가 나지 않으면 무승부예요.</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </section>
   <section id="view-seung" hidden>
     <div class="top">
       <button type="button" class="back" id="sbk">← 홈</button>
@@ -608,5 +679,6 @@ body.tutopen { overflow: hidden; }
 <script src="tutorial.js"></script>
 <script src="omok.js"></script>
 <script src="seung.js"></script>
+<script src="hobak.js"></script>
 </body>
 </html>

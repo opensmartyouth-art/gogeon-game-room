@@ -495,6 +495,7 @@ const Join = (function () {
   const GAMES = {
     diamond: { name: '다이아몬드 게임', seats: { 1: ['p1', '빨강'], 2: ['p2', '파랑'] }, mine: n => '내 구슬은 ' + n + '이에요', first: '방장(빨강)이 먼저 시작해요.' },
     omok: { name: '오목', seats: { 1: ['sb', '흑'], 2: ['sw', '백'] }, mine: n => '내 돌은 ' + n + '이에요', first: '방장(흑)이 먼저 둬요.' },
+    hobak: { name: '호박고누', seats: { 1: ['p1', '빨강'], 2: ['p2', '파랑'] }, mine: n => '내 말은 ' + n + '이에요', first: '방장(빨강)이 먼저 움직여요.' },
     seung: { name: '승경도', seats: { 1: ['p1', '홍'], 2: ['p2', '청'] }, mine: n => '내 말은 ' + n + '이에요', first: '방장(홍)이 먼저 굴려요.' }
   };
   const ICON_X = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>';
@@ -1014,6 +1015,12 @@ function miniOmok() {
   st.forEach(a => { s += '<circle cx="' + a[0] + '" cy="' + a[1] + '" r="4.6" class="' + (a[2] === 'b' ? 'stb' : 'stw') + '"/>'; });
   return s + '</svg>';
 }
+function miniHobak() {
+  const c = 'stroke="var(--mini)" stroke-width="2.2" fill="none"';
+  return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><circle cx="30" cy="30" r="15" ' + c + '/><line x1="30" y1="6" x2="30" y2="54" ' + c + '/><line x1="15" y1="30" x2="45" y2="30" ' + c + '/>' +
+    '<path d="M12 6H48M12 54H48" ' + c + '/><circle cx="12" cy="6" r="3.6" fill="var(--blue)"/><circle cx="30" cy="6" r="3.6" fill="var(--blue)"/><circle cx="48" cy="6" r="3.6" fill="var(--blue)"/>' +
+    '<circle cx="12" cy="54" r="3.6" fill="var(--red)"/><circle cx="30" cy="54" r="3.6" fill="var(--red)"/><circle cx="48" cy="54" r="3.6" fill="var(--red)"/></svg>';
+}
 function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
@@ -1021,7 +1028,7 @@ const GAMES = [
   { id: 'diamond', name: '다이아몬드', sub: '먼저 건너가요', ready: true, mini: miniStar },
   { id: 'seung', name: '승경도', sub: '주사위로 승진해요', ready: true, mini: miniSeung },
   { id: 'omok', name: '오목', sub: '다섯 줄을 만들어요', ready: true, mini: miniOmok },
-  { id: 'hobak', name: '호박고누', sub: '곧 만나요', ready: false, mini: miniDash }
+  { id: 'hobak', name: '호박고누', sub: '막아서 이겨요', ready: true, mini: miniHobak }
 ];
 function renderHub() {
   $('#games').innerHTML = GAMES.map(g =>
@@ -1038,6 +1045,7 @@ function show(v) {
   $('#view-diamond').hidden = v !== 'diamond';
   const ov = $('#view-omok'); if (ov) ov.hidden = v !== 'omok';
   const sv = $('#view-seung'); if (sv) sv.hidden = v !== 'seung';
+  const hv = $('#view-hobak'); if (hv) hv.hidden = v !== 'hobak';
   if (v === 'omok') {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.omokEnter) window.omokEnter();
@@ -1046,12 +1054,16 @@ function show(v) {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.seungEnter) window.seungEnter();
   } else if (window.seungLeave) window.seungLeave();
+  if (v === 'hobak') {
+    token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
+    if (window.hobakEnter) window.hobakEnter();
+  } else if (window.hobakLeave) window.hobakLeave();
   if (v === 'diamond') {
     if (S.busy && S.think) { S.busy = false; S.think = false; }
     render();
     maybeAI();
     tryRemote();
-  } else if (v !== 'omok' && v !== 'seung') {
+  } else if (v !== 'omok' && v !== 'seung' && v !== 'hobak') {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }
@@ -1123,12 +1135,13 @@ function startJoin(game, code) {
   if (game === 'diamond') { cfg.mode = 'online'; renderSettings(); show('diamond'); onModeChange(); joinByCode(code); }
   else if (game === 'omok' && window.omokJoin) window.omokJoin(code);
   else if (game === 'seung' && window.seungJoin) window.seungJoin(code);
+  else if (game === 'hobak' && window.hobakJoin) window.hobakJoin(code);
   else Join.hide(true);
 }
 $('#homeJoin').addEventListener('submit', e => {
   e.preventDefault();
   const code = String($('#homeCode').value || '').trim().toLowerCase();
-  const game = { d: 'diamond', m: 'omok', s: 'seung' }[code[0]];
+  const game = { d: 'diamond', m: 'omok', s: 'seung', h: 'hobak' }[code[0]];
   const err = $('#homeJoinErr');
   const bad = t => { err.textContent = t; err.hidden = false; };
   if (!/^[a-z0-9]{4}$/.test(code) || !game) return bad('코드는 4자리예요. 다시 확인해 주세요.');
