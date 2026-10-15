@@ -505,6 +505,105 @@ body { overflow-anchor: none; }
 .back { display: inline-grid; }
 .top .tutq { display: inline-grid; font-size: 24px; font-weight: 700; line-height: 1; }
 .top .tutq + .gear { margin-left: 0; }
+
+/* ===== TDS(토스 디자인 시스템) 스타일 — 복제본 전용 =====
+   색: @toss/tds-colors 값, 글자: t1~t7 크기표, 컴포넌트: Top·Navigation·Button·BottomCTA·ListRow·Badge·Dialog·Toast·Tab 모양을 CSS로 재현 */
+:root, :root[data-theme="light"] {
+  --t-grey50:#f9fafb; --t-grey100:#f2f4f6; --t-grey200:#e5e8eb; --t-grey300:#d1d6db; --t-grey400:#b0b8c1; --t-grey500:#8b95a1; --t-grey600:#6b7684; --t-grey700:#4e5968; --t-grey800:#333d4b; --t-grey900:#191f28;
+  --t-blue50:#e8f3ff; --t-blue100:#c9e2ff; --t-blue500:#3182f6; --t-blue600:#2272eb; --t-blue700:#1b64da;
+  --t-red50:#ffeeee; --t-red500:#f04452; --t-green500:#03b26c;
+  --bg:#fff; --surface:var(--t-grey100); --card:var(--t-grey100); --ink:var(--t-grey900); --ink-2:var(--t-grey600); --line:var(--t-grey200);
+  --accent:var(--t-blue500); --accent-ink:var(--t-blue600); --on-accent:#fff;
+  --font-display: var(--font-body);
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+  --t-weak:var(--t-blue50); --t-weak-ink:var(--t-blue500);
+  --t-dweak:var(--t-grey100); --t-dweak-ink:var(--t-grey700);
+  --t-page:#fff; --t-cta-fade:rgba(255,255,255,0);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --t-grey100:#2c2c35; --t-grey200:#3a3a45; --bg:#17171c; --surface:#202027; --card:#202027; --ink:#f9fafb; --ink-2:#a1a1ad; --line:#2f2f38;
+  --accent:#4593fc; --accent-ink:#64a8ff; --t-weak:rgba(69,147,252,.16); --t-weak-ink:#64a8ff; --t-dweak:#2c2c35; --t-dweak-ink:#d1d6db; --t-cta-fade:rgba(23,23,28,0);
+} }
+:root[data-theme="dark"] {
+  --t-grey100:#2c2c35; --t-grey200:#3a3a45; --bg:#17171c; --surface:#202027; --card:#202027; --ink:#f9fafb; --ink-2:#a1a1ad; --line:#2f2f38;
+  --accent:#4593fc; --accent-ink:#64a8ff; --t-weak:rgba(69,147,252,.16); --t-weak-ink:#64a8ff; --t-dweak:#2c2c35; --t-dweak-ink:#d1d6db; --t-cta-fade:rgba(23,23,28,0);
+}
+body { letter-spacing: -0.01em; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--t-blue500) 40%, transparent); }
+
+/* Top (t2 제목 + 보조 문장) */
+.brand { font-size: 26px; line-height: 35px; font-weight: 700; letter-spacing: -0.02em; margin: 12px 0 0; }
+.brand::after { display: none; }
+.brandsub { margin: 6px 0 0; font-size: 17px; line-height: 25.5px; font-weight: 400; color: var(--ink-2); }
+
+/* ListRow — 홈 게임 목록 */
+.games { grid-template-columns: 1fr; gap: 0; margin: 20px -4px 0; max-width: 640px; }
+.game { flex-direction: row; align-items: center; gap: 16px; min-height: 80px; height: auto; padding: 12px 16px 12px 12px; border: 0; border-radius: 16px; background: transparent; }
+.game:not([disabled]):hover { background: var(--t-grey100); transform: none; border: 0; }
+.game:not([disabled]):active { background: var(--t-grey100); transform: scale(.985); }
+.game .mini { position: static; order: -1; flex: none; width: 56px; height: 56px; border-radius: 16px; background: var(--t-grey100); display: grid; place-items: center; }
+.game .mini svg { width: 40px; height: 40px; }
+.game .gtxt { flex: 1; min-width: 0; }
+.gname { font-family: var(--font-body); font-weight: 700; font-size: 18px; line-height: 27px; letter-spacing: -0.02em; color: var(--ink); }
+.gsub { margin-top: 0; font-size: 15px; line-height: 22.5px; color: var(--ink-2); }
+.game::after { content: ""; flex: none; width: 10px; height: 10px; margin-right: 6px; border-right: 2.4px solid var(--t-grey400); border-top: 2.4px solid var(--t-grey400); transform: rotate(45deg); }
+
+/* Navigation */
+.top { position: relative; min-height: 56px; margin-bottom: 8px; gap: 0; }
+.gtitle { position: absolute; left: 56px; right: 112px; top: 50%; transform: translateY(-50%); text-align: center; font-family: var(--font-body); font-weight: 700; font-size: 18px; line-height: 27px; pointer-events: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.back, .gear, .top .tutq { border: 0; background: transparent; color: var(--ink); border-radius: 50%; }
+.back:active, .gear:active, .top .tutq:active { background: var(--t-grey100); }
+.top .tutq { font-size: 22px; font-weight: 600; margin-left: auto; }
+
+/* Button — xlarge(56) / 모서리 16 / 17px semibold, fill·weak */
+.btn { min-height: 56px; padding: 0 22px; border: 0; border-radius: 16px; background: var(--t-dweak); color: var(--t-dweak-ink); font-size: 17px; font-weight: 600; line-height: 25.5px; transition: background-color 120ms, transform 120ms; }
+.btn:not(.primary):not(:disabled):hover { background: var(--t-grey200); border: 0; }
+.btn:not(.primary):not(:disabled):active { background: var(--t-grey200); }
+.btn.primary { background: var(--t-blue500); color: #fff; }
+.btn.primary:not(:disabled):hover { background: var(--t-blue600); }
+.btn.primary:not(:disabled):active { background: var(--t-blue700); }
+.btn:disabled { opacity: .5; }
+.jr .btn { min-height: 44px; padding: 0 18px; border-radius: 12px; font-size: 15px; }
+.btn.big { min-height: 56px; font-size: 17px; }
+
+/* BottomCTA(Double): 왼쪽 weak, 오른쪽 fill */
+@media (max-width: 819px) and (orientation: portrait) {
+  .dock { padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); border-top: 0; background: var(--bg); box-shadow: 0 -12px 16px -4px var(--bg); }
+  .dock .row { gap: 8px; }
+  .dock .row .btn { min-height: 56px; font-size: 17px; font-weight: 600; border-radius: 16px; }
+  .dock .row .btn.primary { flex: 1.2; }
+}
+
+/* 입력, Tab/세그먼트 */
+.jr { border: 0; background: var(--t-grey100); border-radius: 16px; padding: 6px 6px 6px 16px; }
+.jr:focus-within { border: 0; box-shadow: 0 0 0 2px var(--t-blue500); }
+.olinput { border: 0; background: var(--t-grey100); border-radius: 12px; }
+.olinput:focus { box-shadow: 0 0 0 2px var(--t-blue500); }
+.seg { display: inline-flex; padding: 4px; border: 0; border-radius: 14px; background: var(--t-grey100); gap: 2px; }
+.seg button { min-height: 44px; padding: 0 16px; border: 0 !important; border-radius: 11px; color: var(--ink-2); font-size: 15px; font-weight: 600; }
+.seg button[aria-checked="true"] { background: var(--bg); color: var(--ink); font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+
+/* 플레이어 카드 = ListRow + Badge 느낌 */
+.pl { border: 0; border-radius: 18px; background: var(--t-grey100); padding: 12px 14px; }
+.pl.on { background: var(--t-blue50); box-shadow: inset 0 0 0 2.5px var(--t-blue500); }
+:root[data-theme="dark"] .pl.on { background: rgba(69,147,252,.16); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pl.on { background: rgba(69,147,252,.16); } }
+.pl b { font-size: 17px; font-weight: 700; }
+.pl small { color: var(--ink-2); font-size: 14px; }
+.chip { border: 0; background: var(--t-weak); color: var(--t-weak-ink); font-weight: 600; padding: 5px 10px; font-size: 13px; line-height: 1.2; border-radius: 8px; }
+
+/* Dialog, Toast, 설정 시트 */
+.askbox { border-radius: 24px; padding: 28px 20px 20px; }
+.askbox p { font-size: 20px; font-weight: 700; line-height: 1.45; text-align: center; }
+.askrow .btn { min-height: 56px; font-size: 17px; }
+.toast { background: #333d4b; border-radius: 16px; font-size: 17px; font-weight: 600; padding: 14px 20px; }
+.panel.open { border-radius: 24px 24px 0 0; }
+.result::before { opacity: .94; }
+.rtitle { font-weight: 700; }
+
+/* 화면에 주요 버튼은 하나만(One Thing): 하단 바가 없는 게임은 새 게임을 weak로 */
+#hagain, #oagain, #sagain, #yagain { background: var(--t-dweak); color: var(--t-dweak-ink); }
+#hagain:not(:disabled):active, #oagain:not(:disabled):active, #sagain:not(:disabled):active, #yagain:not(:disabled):active { background: var(--t-grey200); }
 </style>
 </head>
 <body>
@@ -513,6 +612,7 @@ body { overflow-anchor: none; }
 <div class="app">
   <section id="view-hub">
     <h1 class="brand">고전게임방</h1>
+    <p class="brandsub">하고 싶은 게임을 골라 주세요</p>
     <ul class="games" id="games"></ul>
     <form class="joinrow" id="homeJoin" autocomplete="off">
       <div class="jr">

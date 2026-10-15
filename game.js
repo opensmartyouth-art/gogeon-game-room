@@ -1064,7 +1064,7 @@ const GAMES = [
 function renderHub() {
   $('#games').innerHTML = GAMES.map(g =>
     '<li><button type="button" class="game" data-id="' + g.id + '"' + (g.ready ? '' : ' disabled') + '>' +
-    '<span class="gname">' + g.name + '</span><span class="gsub">' + g.sub + '</span>' +
+    '<span class="gtxt"><span class="gname">' + g.name + '</span><span class="gsub">' + g.sub + '</span></span>' +
     '<span class="mini">' + g.mini() + '</span></button></li>'
   ).join('');
 }
