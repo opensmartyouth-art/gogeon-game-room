@@ -244,10 +244,10 @@
     const nm = names();
     const ready = !(isOn() && !O.guestIn());
     for (let p = 1; p <= 2; p++) {
-      q('#hpn' + p).textContent = nm[p];
-      let extra = '';
-      if (isOn() && O.seat > 0 && p !== myColor()) extra = !ready ? ' · 대기 중' : (O.oppOn ? ' · 접속 중' : ' · 오프라인');
-      q('#hps' + p).textContent = (G.winner === p ? '승리' : (!G.winner && G.turn === p && ready ? '차례' : '')) + extra;
+      let conn = '';
+      if (isOn() && O.seat > 0 && p !== myColor()) conn = !ready ? 'wait' : (O.oppOn ? 'on' : 'off');
+      setPlayerName(q('#hpn' + p), nm[p], conn);
+      q('#hps' + p).textContent = G.winner === p ? '승리' : '';
       q('#hpl' + p).classList.toggle('on', !G.winner && G.turn === p && ready);
     }
     q('#hsay').textContent = sayText();

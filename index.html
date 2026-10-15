@@ -134,7 +134,7 @@ button { font-family: inherit; }
 .holerim { fill: var(--hole-rim); }
 .tray, .rim { }
 .inlay { fill: none; stroke: var(--gold); stroke-width: 1.3; stroke-linejoin: round; opacity: 0.6; }
-.halo { fill: none; stroke: var(--gold); stroke-width: 1.6; animation: halo 1.8s ease-in-out infinite; }
+.halo { fill: none; stroke: var(--gold); stroke-width: 2.6; animation: halo 1.8s ease-in-out infinite; }
 @keyframes halo { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.65; } }
 .trail { transform-box: fill-box; transform-origin: center; animation: trail 520ms ease-out forwards; }
 .trail.t1 { fill: var(--red-hi); } .trail.t2 { fill: var(--blue-hi); }
@@ -168,7 +168,9 @@ button { font-family: inherit; }
 .dest { fill: var(--gold); transform-box: fill-box; transform-origin: center; transition: transform 80ms ease-out; animation: dp 1.4s ease-in-out infinite; }
 @keyframes dp { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 .dest.snapon { transform: scale(1.9); }
-.ring { fill: none; stroke: var(--gold); stroke-width: 2.8; }
+.ring { fill: none; stroke: var(--gold); stroke-width: 3.6; }
+.destring { fill: color-mix(in srgb, var(--gold) 22%, transparent); stroke: var(--gold); stroke-width: 1.8; pointer-events: none; }
+.pcg.drag .lift.up { transform: translateY(-4px) scale(1.55); }
 .lastf { fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-dasharray: 3 3; opacity: 0.8; }
 .lastt { fill: none; stroke: var(--gold); stroke-width: 1.6; opacity: 0.55; }
 .hit { fill: transparent; pointer-events: all; }
@@ -448,6 +450,55 @@ body { overflow-anchor: none; }
   .ytrays { display: none; }
   .ylast { min-height: 24px; font-size: 22px; }
 }
+
+/* ===== 큰 글씨·큰 터치 (50대 이상 기준, docs/UX_PRINCIPLES.md) ===== */
+.back { min-height: 48px; padding: 0 16px; font-size: 16px; font-weight: 500; }
+.gear { min-height: 48px; padding: 0 16px; font-size: 16px; }
+.top .tutq { width: auto; min-height: 48px; padding: 0 16px; border-radius: var(--r-md); font-size: 16px; font-weight: 500; }
+.btn { min-height: 52px; font-size: 17px; }
+.pl { padding: 12px 14px; border-width: 2px; transition: background 120ms, border-color 120ms, opacity 120ms; }
+.pl b { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.pl small { font-size: 14px; }
+.pl small:empty { display: none; }
+.players:has(.pl.on) .pl:not(.on) { opacity: 0.55; }
+.pl.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--card)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent); }
+.say { font-size: 18px; font-weight: 700; line-height: 1.4; min-height: 52px; }
+.cdot { display: inline-block; flex: none; width: 12px; height: 12px; border-radius: 50%; background: #9A968C; }
+.cdot.on { background: #2FA866; box-shadow: 0 0 0 3px color-mix(in srgb, #2FA866 28%, transparent); }
+.cdot.wait { animation: cwait 1.2s ease-in-out infinite; }
+@keyframes cwait { 50% { opacity: 0.35; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 560px) { .gtitle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .top .tutq { margin-left: auto; } }
+
+/* 하단 고정 바(폰 세로): 판을 최대한 크게 쓰고, 주요 버튼은 엄지 닿는 곳에 */
+@media (max-width: 819px) and (orientation: portrait) {
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--line); }
+  .dock .row { flex-wrap: nowrap; gap: 10px; }
+  .dock .row .btn { flex: 1; min-height: 56px; font-size: 18px; font-weight: 600; }
+  .dock .count { display: none; }
+  .layout:has(.dock) { padding-bottom: calc(var(--dock-h, 90px) - 40px); }
+  #view-diamond .top { margin-bottom: 6px; }
+  #view-diamond .players { gap: 6px; }
+  #view-diamond .pl { padding: 8px 12px; }
+  #view-diamond .say { margin: 6px 2px 4px; min-height: 28px; font-size: 18px; }
+  #board { width: auto; max-width: 100%; height: min(calc((100vw - 8px) * 1.157), max(300px, calc(100dvh - var(--dock-h, 90px) - 188px))); }
+}
+
+.ask { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; background: rgba(10,18,14,.5); }
+.ask[hidden] { display: none; }
+.askbox { width: min(420px, 100%); padding: 26px 22px 20px; border-radius: 22px; background: var(--bg); box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.askbox p { margin: 0 0 20px; font-size: 21px; font-weight: 700; line-height: 1.45; text-wrap: balance; }
+.askrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.askrow .btn { min-height: 60px; font-size: 19px; font-weight: 700; }
+
+.toast { position: fixed; left: 50%; top: calc(10px + env(safe-area-inset-top)); z-index: 80; width: max-content; max-width: min(94vw, 440px); word-break: keep-all; transform: translateX(-50%); padding: 14px 20px; border-radius: 18px; background: #1F1E1B; color: #fff; font-size: 18px; font-weight: 700; line-height: 1.4; text-align: center; text-wrap: balance; box-shadow: 0 10px 30px rgba(0,0,0,.3); pointer-events: none; animation: tin 160ms ease-out; }
+.toast[hidden] { display: none; }
+@keyframes tin { from { opacity: 0; transform: translate(-50%, -8px); } }
+@media not all and (max-width: 819px) and (orientation: portrait) { .toast { display: none !important; } }
+@media (max-width: 819px) and (orientation: portrait) {
+  .say { position: absolute; width: 1px; height: 1px; min-height: 0; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #board { height: min(calc((100vw - 8px) * 1.157), max(300px, calc(100dvh - var(--dock-h, 90px) - 136px))); }
+}
 </style>
 </head>
 <body>
@@ -469,9 +520,9 @@ body { overflow-anchor: none; }
 
   <section id="view-diamond" hidden>
     <div class="top">
-      <button type="button" class="back" id="back">← 홈</button>
+      <button type="button" class="back" id="back" data-ask="leave">← 게임 목록</button>
       <h2 class="gtitle">다이아몬드 게임</h2>
-      <button type="button" class="tutq tutbtn" data-t="diamond" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="diamond" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="panel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -506,11 +557,11 @@ body { overflow-anchor: none; }
           </div>
         </div>
       </div>
-      <div class="side">
+      <div class="side dock">
         <div class="invite" id="inv" hidden></div>
         <div class="row">
           <button type="button" class="btn" id="undo">되돌리기</button>
-          <button type="button" class="btn primary" id="again">새 게임</button>
+          <button type="button" class="btn primary" id="again" data-ask="new">새 게임</button>
           <p class="count" id="count"></p>
         </div>
         <div class="panel" id="panel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
@@ -518,23 +569,16 @@ body { overflow-anchor: none; }
           <div class="settings" id="settings"></div>
           <button type="button" class="btn tutbtn tutagain" data-t="diamond">튜토리얼 다시 보기</button>
         </div>
-        <details class="rules" id="rules">
-          <summary>규칙</summary>
-          <ol>
-            <li>내 구슬은 이웃한 빈 칸으로 한 칸 움직이거나, 바로 옆 구슬(내 것이든 상대 것이든)을 뛰어넘어 그 뒤 빈 칸에 내려요.</li>
-            <li>뛰어넘은 자리에서 또 뛰어넘을 수 있으면 한 턴에 계속 이어 갈 수 있고, 중간에서 멈춰도 돼요.</li>
-            <li>구슬을 잡지는 않아요. 반대편 삼각형 진영 10칸을 먼저 채우면 이겨요. 상대 구슬이 몇 개 남아 있어도 진영이 모두 차고 내 구슬이 하나 이상 있으면 이긴 거예요.</li>
-          </ol>
-        </details>
+
       </div>
     </div>
   </section>
 
   <section id="view-omok" hidden>
     <div class="top">
-      <button type="button" class="back" id="obk">← 홈</button>
+      <button type="button" class="back" id="obk">← 게임 목록</button>
       <h2 class="gtitle">오목</h2>
-      <button type="button" class="tutq tutbtn" data-t="omok" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="omok" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="opanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -593,9 +637,9 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-hobak" hidden>
     <div class="top">
-      <button type="button" class="back" id="hbk">← 홈</button>
+      <button type="button" class="back" id="hbk">← 게임 목록</button>
       <h2 class="gtitle">호박고누</h2>
-      <button type="button" class="tutq tutbtn" data-t="hobak" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="hobak" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="hpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -652,9 +696,9 @@ body { overflow-anchor: none; }
 
   <section id="view-solitaire" hidden>
     <div class="top">
-      <button type="button" class="back" id="solbk">← 홈</button>
+      <button type="button" class="back" id="solbk">← 게임 목록</button>
       <h2 class="gtitle">솔리테어</h2>
-      <button type="button" class="tutq tutbtn" data-t="solitaire" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="solitaire" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="solpanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -700,9 +744,9 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-yut" hidden>
     <div class="top">
-      <button type="button" class="back" id="ybk">← 홈</button>
+      <button type="button" class="back" id="ybk">← 게임 목록</button>
       <h2 class="gtitle">윷놀이</h2>
-      <button type="button" class="tutq tutbtn" data-t="yut" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="yut" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="ypanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -768,9 +812,9 @@ body { overflow-anchor: none; }
   </section>
   <section id="view-seung" hidden>
     <div class="top">
-      <button type="button" class="back" id="sbk">← 홈</button>
+      <button type="button" class="back" id="sbk">← 게임 목록</button>
       <h2 class="gtitle">승경도</h2>
-      <button type="button" class="tutq tutbtn" data-t="seung" aria-label="튜토리얼 보기" title="튜토리얼">?</button>
+      <button type="button" class="tutq tutbtn" data-t="seung" aria-label="게임 방법 보기" title="게임 방법">게임 방법</button>
       <button type="button" class="gear" data-p="spanel" aria-expanded="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>설정</button>
     </div>
     <div class="layout">
@@ -855,6 +899,10 @@ body { overflow-anchor: none; }
   </div>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="off" hidden></div>
+<div class="ask" id="ask" role="alertdialog" aria-modal="true" aria-labelledby="askmsg" hidden>
+  <div class="askbox"><p id="askmsg"></p><div class="askrow"><button type="button" class="btn" id="askno">아니요</button><button type="button" class="btn primary" id="askyes">네</button></div></div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script src="core.js"></script>
 <script src="game.js"></script>

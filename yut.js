@@ -195,7 +195,7 @@
     for (let p = 1; p <= 2; p++) {
       const fin = G.pos[p].filter(n => n === FIN).length, wait = G.pos[p].filter(n => n === WAIT).length;
       q('#ypn' + p).textContent = nm[p];
-      q('#yps' + p).textContent = (G.winner === p ? '승리' : (!G.winner && G.turn === p ? '차례 · ' : '')) + '대기 ' + wait + ' · 완주 ' + fin + '/' + G.pos[p].length;
+      q('#yps' + p).textContent = (G.winner === p ? '승리 · ' : '') + '대기 ' + wait + ' · 완주 ' + fin + '/' + G.pos[p].length;
       q('#ypl' + p).classList.toggle('on', !G.winner && G.turn === p);
       const tray = q('#ytray' + p);
       tray.textContent = '대기 말 ' + wait + '개';

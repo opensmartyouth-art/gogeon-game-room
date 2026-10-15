@@ -210,11 +210,11 @@
   function renderStatus() {
     const ready = !(isOn() && !O.guestIn());
     for (let p = 1; p <= 2; p++) {
-      q('#spn' + p).textContent = name(p);
       const pos = G.pos[p];
-      let extra = '';
-      if (isOn() && O.seat > 0 && p !== myP()) extra = !ready ? ' · 대기 중' : (O.oppOn ? ' · 접속 중' : ' · 오프라인');
-      q('#sps' + p).textContent = TILES[pos][0] + ' ' + TILES[pos][1] + ' · 상소 ' + G.tok[p] + (G.skip[p] ? ' · 귀양' : '') + extra;
+      let conn = '';
+      if (isOn() && O.seat > 0 && p !== myP()) conn = !ready ? 'wait' : (O.oppOn ? 'on' : 'off');
+      setPlayerName(q('#spn' + p), name(p), conn);
+      q('#sps' + p).textContent = TILES[pos][0] + ' ' + TILES[pos][1] + ' · 상소 ' + G.tok[p] + (G.skip[p] ? ' · 귀양' : '');
       q('#spl' + p).classList.toggle('on', !G.winner && G.turn === p && ready);
     }
     q('#ssay').textContent = sayText();

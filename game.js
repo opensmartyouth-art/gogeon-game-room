@@ -1,3 +1,4 @@
+const PROGRESS = {};   /* 게임별 '진행 중인 판이 있나' */
 /* ===== 화면 (허브 + 다이아몬드 게임) ===== */
 const NS = 'http://www.w3.org/2000/svg';
 const $ = (s, r) => (r || document).querySelector(s);
@@ -286,7 +287,7 @@ function boardMarkup() {
     s += '<circle class="lastt" cx="' + b.x + '" cy="' + b.y + '" r="15.5"/>';
   }
   if (act && S.sel !== null) {
-    for (const d of S.dests) s += '<circle class="dest" data-d="' + d + '" cx="' + P(d).x + '" cy="' + P(d).y + '" r="5.5"/>';
+    for (const d of S.dests) s += '<circle class="destring" cx="' + P(d).x + '" cy="' + P(d).y + '" r="13.5"/><circle class="dest" data-d="' + d + '" cx="' + P(d).x + '" cy="' + P(d).y + '" r="7.5"/>';
   }
   s += '<g id="pieces">';
   for (let i = 0; i < N; i++) {
@@ -331,17 +332,23 @@ function sayText() {
   return nm[S.turn] + ' 차례예요. 구슬을 눌러 집어 보세요.';
 }
 
+/* 이름 옆 접속 점: on(초록) / off(회색) / wait(회색, 깜빡임) */
+function setPlayerName(el, name, conn) {
+  const L = { on: '접속 중', off: '오프라인', wait: '들어오기를 기다리는 중' };
+  el.innerHTML = name + (conn ? '<i class="cdot ' + conn + '" role="img" aria-label="' + L[conn] + '"></i>' : '');
+}
+PROGRESS.diamond = () => !S.winner && S.moves > 0;
 function renderStatus() {
   const nm = names();
   const oppSeat = OL.seat === 1 ? 2 : 1;
   for (let p = 1; p <= 2; p++) {
-    $('#pn' + p).textContent = nm[p];
-    let extra = '';
+    let conn = '';
     if (isOnline() && OL.seat > 0 && p === oppSeat) {
-      if (!olReady()) extra = ' · 대기 중';
-      else if (OL.room) extra = OL.oppOn ? ' · 접속 중' : ' · 오프라인';
+      if (!olReady()) conn = 'wait';
+      else if (OL.room) conn = OL.oppOn ? 'on' : 'off';
     }
-    $('#ps' + p).textContent = '목표 ' + countGoal(S.board, p) + '/10' + (!S.winner && S.turn === p && !(isOnline() && !olReady()) ? ' · 차례' : '') + extra;
+    setPlayerName($('#pn' + p), nm[p], conn);
+    $('#ps' + p).textContent = '목표 ' + countGoal(S.board, p) + '/10';
     $('#pl' + p).classList.toggle('on', !S.winner && S.turn === p && !(isOnline() && !olReady()));
   }
   $('#say').textContent = sayText();
@@ -871,7 +878,7 @@ function startDrag(e) {
   g.setAttribute('class', 'pcg drag');
   g.innerHTML = pieceMarkup(S.turn, { up: true, start: true });
   const p = svgPt(e) || P(drag.i);
-  g.style.transform = 'translate(' + p.x + 'px,' + (p.y - (drag.touch ? 26 : 0)) + 'px)';
+  g.style.transform = 'translate(' + p.x + 'px,' + (p.y - (drag.touch ? 38 : 0)) + 'px)';
   $('#pieces').appendChild(g);
   drag.el = g;
   g.getBoundingClientRect();
@@ -881,9 +888,9 @@ function startDrag(e) {
 function moveDrag(e) {
   const p = svgPt(e);
   if (!p) return;
-  const x = p.x, y = p.y - (drag.touch ? 26 : 0);
+  const x = p.x, y = p.y - (drag.touch ? 38 : 0);
   drag.el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-  let best = null, bd = 22 * 22;
+  let best = null, bd = 30 * 30;
   for (const d of S.dests) {
     const q = P(d), dx = q.x - x, dy = q.y - y, dd = dx * dx + dy * dy;
     if (dd < bd) { bd = dd; best = d; }
@@ -899,7 +906,19 @@ function moveDrag(e) {
 boardEl.addEventListener('pointerdown', e => {
   if (e.button > 0) return;
   audio(); bgmSync();
-  const t = e.target.closest && e.target.closest('[data-i]');
+  let t = e.target.closest && e.target.closest('[data-i]');
+  if (!t || !t.classList.contains('act')) {
+    /* 정확히 못 눌러도, 가까운 내 말/갈 곳을 잡아 줘요 */
+    const pt = svgPt(e);
+    if (pt) {
+      let bd = 30 * 30, bt = null;
+      boardEl.querySelectorAll('.hit.act').forEach(h => {
+        const dx = +h.getAttribute('cx') - pt.x, dy = +h.getAttribute('cy') - pt.y, dd = dx * dx + dy * dy;
+        if (dd < bd) { bd = dd; bt = h; }
+      });
+      if (bt) t = bt;
+    }
+  }
   if (!t || !humanTurn()) return;
   const i = +t.dataset.i;
   drag = {
@@ -1050,6 +1069,52 @@ function renderHub() {
   ).join('');
 }
 
+
+/* ---------- 큰 확인창, 하단 바 높이 ---------- */
+function askConfirm(msg, onYes) {
+  const a = $('#ask'); $('#askmsg').textContent = msg; a.hidden = false;
+  const done = ok => { a.hidden = true; $('#askyes').onclick = $('#askno').onclick = null; if (ok) onYes(); };
+  $('#askyes').onclick = () => done(true); $('#askno').onclick = () => done(false);
+  try { $('#askno').focus({ preventScroll: true }); } catch (e) { /* 무시 */ }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-ask]');
+  if (!b || b.disabled || b._ok) return;
+  const f = PROGRESS[view];
+  if (!f || !f()) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  askConfirm(b.dataset.ask === 'new' ? '새 게임을 시작할까요?' : '게임 목록으로 나갈까요?', () => { b._ok = true; b.click(); b._ok = false; });
+}, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#ask').hidden) $('#askno').click(); });
+function updateDock() {
+  const d = Array.from(document.querySelectorAll('.dock')).find(x => x.getClientRects().length && getComputedStyle(x).position === 'fixed');
+  document.documentElement.style.setProperty('--dock-h', (d ? Math.ceil(d.getBoundingClientRect().height) : 90) + 'px');
+}
+if (window.ResizeObserver) { const ro = new ResizeObserver(updateDock); document.querySelectorAll('.dock').forEach(d => ro.observe(d)); }
+window.addEventListener('resize', updateDock);
+
+
+/* ---------- 안내 문구는 토스트로 ---------- */
+(function () {
+  const t = document.getElementById('toast'); let tm = 0, last = '', lastAt = 0;
+  function toast(msg) {
+    const now = Date.now();
+    if (!msg || (msg === last && now - lastAt < 3500)) return;
+    last = msg; lastAt = now;
+    t.hidden = true; void t.offsetWidth; t.textContent = msg; t.hidden = false;
+    clearTimeout(tm); tm = setTimeout(() => { t.hidden = true; }, Math.min(5000, 1800 + msg.length * 55));
+  }
+  window.toast = toast;
+  const mo = new MutationObserver(ms => {
+    for (const m of ms) {
+      const el = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+      if (el && el.classList && el.classList.contains('say') && el.getClientRects().length) toast(el.textContent.trim());
+    }
+  });
+  document.querySelectorAll('.say').forEach(el => mo.observe(el, { childList: true, characterData: true, subtree: true }));
+  document.addEventListener('click', e => { if (e.target.closest('.back,.gear,[data-ask]')) t.hidden = true; });
+})();
+
 function show(v) {
   view = v;
   document.querySelectorAll('.panel.open').forEach(p => p.classList.remove('open'));
@@ -1089,6 +1154,7 @@ function show(v) {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }
+  updateDock();
   try { window.scrollTo(0, 0); } catch (e) { /* 무시 */ }
   if (v !== 'hub' && window.Tut) window.Tut.enter(v);
 }
@@ -1196,7 +1262,7 @@ function start(data) {
   }
   renderSettings();
   renderOnline();
-  if (window.matchMedia && matchMedia('(min-width: 820px)').matches) $('#rules').open = true;
+  /* 규칙 접이식은 튜토리얼로 대체했어요 */
   show(view);
   loadCaps();
 }
