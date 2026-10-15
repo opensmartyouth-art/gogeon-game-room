@@ -124,6 +124,57 @@
     '<path d="M100 40 C 120 14 150 14 168 40" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>' +
     lbl(83, 118, '상대가 있는 칸에 멈추면', 'middle', PL) + lbl(197, 74, '상대 −2칸', 'middle', 'var(--red-ink)')));
 
+
+  /* ----- 호박고누 ----- */
+  const hbNode = (x, y, c) => '<circle cx="' + x + '" cy="' + y + '" r="' + (c ? 9 : 4) + '" fill="' + (c ? 'var(--' + c + ')' : 'var(--ink-2)') + '"' + (c ? ' stroke="var(--' + c + '-ink)" stroke-width="1.2"' : '') + '/>';
+  const hbLine = (a, b, c) => '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + (c || 'var(--ink-2)') + '" stroke-width="2" opacity="0.7"/>';
+  const HB = { r: [[100, 124], [140, 124], [180, 124]], b: [[100, 24], [140, 24], [180, 24]], c: [140, 74] };
+  const hbBoard = (reds, blues, extra) => {
+    let s = '<circle cx="140" cy="74" r="40" fill="none" stroke="var(--ink-2)" stroke-width="2" opacity="0.7"/>' +
+      hbLine([140, 34], [140, 114]) + hbLine([100, 74], [180, 74]) + hbLine([140, 24], [140, 34]) + hbLine([140, 114], [140, 124]) +
+      hbLine(HB.b[0], HB.b[1]) + hbLine(HB.b[1], HB.b[2]) + hbLine(HB.r[0], HB.r[1]) + hbLine(HB.r[1], HB.r[2]);
+    [[140, 34], [180, 74], [140, 114], [100, 74], HB.c].forEach(p => { s += hbNode(p[0], p[1]); });
+    HB.b.concat(HB.r).forEach(p => { s += hbNode(p[0], p[1]); });
+    return W(s + (extra || '') + reds.map(p => marble(p[0], p[1], 'red')).join('') + blues.map(p => marble(p[0], p[1], 'blue')).join(''));
+  };
+  const hbGoal = () => hbBoard(HB.r, HB.b, lbl(236, 70, '상대를', 'middle', 'var(--gold)') + lbl(236, 88, '막아 보세요', 'middle', PL));
+  const hbMove = () => hbBoard([HB.r[0], HB.r[2], [140, 114]], HB.b,
+    dest(100, 74) + dest(180, 74) + dest(140, 74) +
+    '<circle cx="140" cy="114" r="15" fill="none" stroke="var(--gold)" stroke-width="2.6"/>');
+  const hbNoBack = () => hbBoard([HB.r[0], HB.r[2], [180, 74]], [HB.b[0], HB.b[2], [100, 74]],
+    '<path d="M168 82 C 160 108 150 118 140 122" fill="none" stroke="var(--red-ink)" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>' +
+    '<path d="M132 114 L146 130 M146 114 L132 130" stroke="var(--red-ink)" stroke-width="3" stroke-linecap="round" transform="translate(-4 -2)"/>' +
+    lbl(60, 148, '집을 떠난 말은 어느 집에도 못 들어가요', 'start', PL));
+  const hbBlock = () => hbBoard([[140, 34], HB.r[1], HB.r[2]], HB.b,
+    '<rect x="84" y="9" width="112" height="30" rx="15" fill="none" stroke="var(--gold)" stroke-width="2.4"/>' + lbl(240, 70, '못 움직이면', 'middle', 'var(--gold)') + lbl(240, 88, '져요', 'middle', PL));
+
+  /* ----- 솔리테어 ----- */
+  const card = (x, y, up, txt, red) => '<rect x="' + x + '" y="' + y + '" width="34" height="48" rx="5" fill="' + (up ? '#fff' : 'var(--blue)') + '" stroke="' + (up ? '#B9B4A8' : 'var(--blue-ink)') + '" stroke-width="1.2"/>' +
+    (up ? '<text x="' + (x + 6) + '" y="' + (y + 18) + '" font-size="14" font-weight="800" fill="' + (red ? '#C0432E' : '#1B1A17') + '">' + txt + '</text>' : '');
+  const solGoal = () => {
+    let s = '';
+    ['♠', '♥', '♣', '♦'].forEach((c, i) => { s += card(24 + i * 40, 20, true, 'A', i % 2 === 1 || i === 3).replace('>A<', '>' + c + '<') ; });
+    s += lbl(140, 92, 'A부터 K까지 무늬별로', 'middle', 'var(--gold)') + lbl(140, 112, '네 줄을 모두 쌓으면 이겨요', 'middle', PL);
+    return W(panel(s));
+  };
+  const solStack = () => W(panel(
+    card(60, 20, true, '8♠') + card(60, 44, true, '7♥', true) + card(60, 68, true, '6♣') +
+    card(170, 20, true, '8♥', true) + '<path d="M138 70 L166 70" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4"/>' + card(170, 58, true, '7♠') +
+    lbl(140, 140, '빨강·검정을 번갈아, 큰 수에서 작은 수로', 'middle', PL)));
+  const solTap = () => W(panel(
+    card(40, 40, false) + card(92, 40, true, '5♦', true) +
+    '<path d="M140 62 C 170 40 190 40 214 62" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="5 4" stroke-linecap="round"/>' +
+    card(204, 40, true, '4♠') +
+    lbl(57, 108, '덱', 'middle', PL) + lbl(109, 108, '눌러서', 'middle', 'var(--gold)') + lbl(221, 108, '자동으로 이동', 'middle', PL) +
+    lbl(140, 134, '카드를 누르면 갈 수 있는 곳으로 가요. 끌어서 놓아도 돼요', 'middle', PL)));
+  const solK = () => W(panel(
+    '<rect x="103" y="30" width="34" height="48" rx="5" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="4 4"/>' +
+    card(160, 30, true, 'K♥', true) + '<path d="M146 54 L152 54" stroke="var(--gold)" stroke-width="2.4"/>' +
+    lbl(120, 100, '빈 줄', 'middle', PL) + lbl(177, 100, 'K만', 'middle', 'var(--gold)') + lbl(140, 128, '빈 줄에는 K(또는 K로 시작한 묶음)만 놓아요', 'middle', PL)));
+  const solTools = () => W(
+    '<g font-size="13" font-weight="700">' + ['되돌리기로 한 수 취소', '자동 완성으로 마무리', '1장 / 3장 뽑기는 설정에서'].map((t, i) =>
+      '<rect x="40" y="' + (22 + i * 38) + '" width="200" height="30" rx="15" fill="var(--surface)" stroke="var(--line)"/><text x="140" y="' + (42 + i * 38) + '" text-anchor="middle" fill="var(--ink)">' + t + '</text>').join('') + '</g>');
+
   const STEPS = {
     diamond: [
       { t: '목표', d: '별 모양 판에서 <b>내 구슬 10개</b>를 <b>반대편 삼각형 진영</b>으로 먼저 옮기면 이겨요.', a: diaGoal },
@@ -143,6 +194,19 @@
       { t: '상소(다시 굴리기)', d: '나온 수가 마음에 안 들면 <b>상소</b>로 다시 굴릴 수 있어요. 한 판에 <b>2번</b>이고, 다시 굴린 결과는 따라야 해요.', a: sgAppeal },
       { t: '특별한 칸', d: '일부 칸에 멈추면 일이 생겨요. 암행어사·특진은 앞으로, 탄핵·사약·파직은 뒤로, 귀양은 한 번 쉬어요. 어명을 받으면 상소가 하나 늘어요.', a: sgTiles },
       { t: '정적 견제', d: '상대가 서 있는 칸에 멈추면 상대를 <b>2칸 뒤로</b> 보내요. 앞서 가는 상대를 따라잡을 기회예요.', a: sgBump }
+    ],
+    hobak: [
+      { t: '목표', d: '말 <b>세 개</b>씩 들고 겨뤄요. 상대 말이 <b>더 움직일 수 없게 막으면</b> 이겨요. 잡는 규칙은 없어요.', a: hbGoal },
+      { t: '움직이기', d: '말을 누르면 갈 수 있는 곳에 <b>노란 점</b>이 떠요. 선을 따라 <b>이웃한 빈 점</b>으로 한 칸씩 가요. 번갈아 한 번씩 움직여요.', a: hbMove },
+      { t: '돌아갈 수 없어요', d: '한 번 <b>집을 떠난 말</b>은 내 집이든 상대 집이든 <b>다시 들어갈 수 없어요</b>. 아직 집에 있는 말만 집에 머물러요.', a: hbNoBack },
+      { t: '막아서 이겨요', d: '내 차례에 <b>움직일 수 있는 말이 하나도 없으면</b> 져요. 100수가 넘도록 승부가 안 나면 비겨요.', a: hbBlock }
+    ],
+    solitaire: [
+      { t: '목표', d: '카드를 모두 <b>위쪽 네 칸</b>에 무늬별로 <b>A부터 K까지</b> 차례로 쌓으면 이겨요.', a: solGoal },
+      { t: '아래에 쌓기', d: '아래 일곱 줄에는 <b>빨강과 검정을 번갈아</b> 큰 수에서 작은 수로 쌓아요. 뒤집힌 카드는 위 카드를 옮기면 열려요.', a: solStack },
+      { t: '카드 옮기기', d: '카드를 <b>누르면</b> 갈 수 있는 곳으로 자동 이동해요. <b>끌어서</b> 놓아도 되고, 덱을 누르면 새 카드를 뽑아요.', a: solTap },
+      { t: '빈 줄', d: '줄이 비면 <b>K</b>(또는 K로 시작하는 묶음)만 놓을 수 있어요.', a: solK },
+      { t: '도구', d: '틀렸다면 <b>되돌리기</b>, 다 풀렸다면 <b>자동 완성</b>을 눌러요. 한 번에 1장·3장 뽑기는 설정에서 바꿔요.', a: solTools }
     ]
   };
 
