@@ -411,7 +411,16 @@
     if (G.winner && G.winner !== 3) { const win = iWon(G.winner); setTimeout(() => { if (win) { FX.win(); fxConfetti(); } else FX.lose(); }, 240); }
     render(); renderOnline();
   }
+  const inviteUrl = () => location.origin + location.pathname + '?o=' + O.code;
+  function renderInvite() { Invite.render(q('#oinv'), { avail: typeof Peer !== 'undefined', online: isOn(), busy: O.busy, code: O.code, host: O.isHost, oppOn: O.oppOn }); }
+  async function inviteStart() {
+    if (typeof Peer === 'undefined' || O.busy) return;
+    if (!isOn()) { oc.mode = 'online'; store.set('cg.omok.cfg', JSON.stringify(oc)); renderSet(); onMode(); }
+    if (!O.code) await createRoomO();
+    if (O.code && Invite.canShare()) Invite.share(inviteUrl());
+  }
   function renderOnline() {
+    renderInvite();
     const el = q('#oonline');
     if (!isOn()) { el.hidden = true; return; }
     el.hidden = false;
@@ -425,7 +434,7 @@
         '<p class="hint">한 사람이 방을 만들고 링크(또는 4자리 코드)를 보내면, 상대가 열어서 바로 들어와요. 방을 만든 사람이 페이지를 닫으면 방도 닫혀요.</p>';
     } else {
       const me = myColor();
-      h += '<div class="olcodebox"><span class="olcode" id="oShown">' + O.code + '</span><button type="button" class="btn" id="oCopy">링크 복사</button></div>' +
+      h += '<div class="olcodebox"><span class="olcode" id="oShown">' + O.code + '</span><button type="button" class="btn primary" id="oShare">공유하기</button><button type="button" class="btn" id="oCopy">링크 복사</button></div>' +
         '<p class="olst">내 돌: ' + (me === 1 ? '흑(먼저 둬요)' : me === 2 ? '백' : '관람') + '</p>' +
         '<div class="row"><button type="button" class="btn" id="oLeave">방 나가기</button></div>';
     }
@@ -551,11 +560,17 @@
     const b = e.target.closest('button'); if (!b) return;
     if (b.id === 'oNew') createRoomO();
     else if (b.id === 'oJoin') joinO(q('#oCode').value);
+    else if (b.id === 'oShare') Invite.share(inviteUrl(), b);
     else if (b.id === 'oCopy') {
       const url = location.origin + location.pathname + '?o=' + O.code;
       const done = () => { b.textContent = '복사됨'; setTimeout(() => { b.textContent = '링크 복사'; }, 1500); };
       try { navigator.clipboard.writeText(url).then(done, () => {}); } catch (err) { /* 무시 */ }
     } else if (b.id === 'oLeave') { leaveO(); reset(); render(); renderOnline(); }
+  });
+  q('#oinv').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.act === 'start') inviteStart();
+    else if (b.dataset.act === 'share') Invite.share(inviteUrl(), b);
   });
   q('#oonline').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'oCode') joinO(e.target.value); });
 

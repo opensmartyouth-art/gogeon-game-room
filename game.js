@@ -406,7 +406,16 @@ const CODE_CHARS = 'abcdefghjkmnpqrstuvwxyz23456789';
 const newCode = () => { let s = ''; for (let i = 0; i < 4; i++) s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]; return s; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+const inviteUrlD = () => location.origin + location.pathname + '?r=' + OL.code;
+function renderInvite() { Invite.render($('#inv'), { avail: onlineOK(), online: isOnline(), busy: OL.busy, code: OL.code, host: OL.isHost, oppOn: OL.oppOn }); }
+async function inviteStartD() {
+  if (!onlineOK() || OL.busy) return;
+  if (!isOnline()) { cfg.mode = 'online'; store.set('cg.diamond.cfg', JSON.stringify(cfg)); renderSettings(); onModeChange(); }
+  if (!OL.code) await createRoom();
+  if (OL.code && Invite.canShare()) Invite.share(inviteUrlD());
+}
 function renderOnline() {
+  renderInvite();
   const el = $('#online');
   if (!isOnline()) { el.hidden = true; return; }
   el.hidden = false;
@@ -420,7 +429,7 @@ function renderOnline() {
       '<button type="button" class="btn" id="olJoin"' + (OL.busy ? ' disabled' : '') + '>들어가기</button></div>' +
       '<p class="hint">한 사람이 방을 만들고 링크(또는 4자리 코드)를 보내면, 상대가 열어서 바로 들어와요. 방을 만든 사람이 페이지를 닫으면 방도 닫혀요.</p>';
   } else {
-    h += '<div class="olcodebox"><span class="olcode" id="olShown">' + OL.code + '</span><button type="button" class="btn" id="olCopy">링크 복사</button></div>' +
+    h += '<div class="olcodebox"><span class="olcode" id="olShown">' + OL.code + '</span><button type="button" class="btn primary" id="olShare">공유하기</button><button type="button" class="btn" id="olCopy">링크 복사</button></div>' +
       '<p class="olst">내 자리: ' + seatLabel + '</p>' +
       '<div class="row"><button type="button" class="btn" id="olLeave">방 나가기</button></div>';
   }
@@ -436,6 +445,32 @@ function copyText(text, btn) {
   };
   try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
 }
+
+
+/* ---------- 친구 초대: 공유 시트 + 게임 화면 안 초대 줄 (세 게임 공용) ---------- */
+const Invite = (function () {
+  const canShare = () => typeof navigator.share === 'function';
+  async function share(url, btn) {
+    const label = btn ? btn.textContent : '';
+    const flash = t => { if (!btn) return; btn.textContent = t; setTimeout(() => { btn.textContent = label; }, 1800); };
+    if (canShare()) {
+      try { await navigator.share({ title: '고전게임방', text: '같이 한 판 해요! 링크를 누르면 바로 들어와요.', url }); return true; }
+      catch (e) { if (e && e.name === 'AbortError') return false; }
+    }
+    try { await navigator.clipboard.writeText(url); flash('링크를 복사했어요'); return true; }
+    catch (e) { flash('링크 복사가 안 돼요'); return false; }
+  }
+  function render(el, st) {
+    let h = '';
+    if (!st.avail) h = '';
+    else if (st.busy) h = '<p class="invtxt">방을 만드는 중…</p>';
+    else if (!st.online || !st.code) h = '<button type="button" class="btn invbtn" data-act="start">친구와 하기 <small>링크를 보내 초대해요</small></button>';
+    else if (st.host && !st.oppOn) h = '<div class="invwait"><span><b>친구를 기다리는 중</b><small>방 코드 ' + st.code + '</small></span><button type="button" class="btn primary" data-act="share">친구에게 공유</button></div>';
+    if (el.innerHTML !== h) el.innerHTML = h;
+    el.hidden = !h;
+  }
+  return { share, render, canShare };
+})();
 
 /* ---------- P2P 연결 (PeerJS): 방장이 상태를 쥐고, 친구와 직접 주고받는다 ---------- */
 const PFX = 'gogeon-dia-';
@@ -988,8 +1023,14 @@ $('#online').addEventListener('click', e => {
   if (!b) return;
   if (b.id === 'olNew') createRoom();
   else if (b.id === 'olJoin') joinByCode($('#olCode').value);
+  else if (b.id === 'olShare') Invite.share(inviteUrlD(), b);
   else if (b.id === 'olCopy') copyText(location.origin + location.pathname + '?r=' + OL.code, b);
   else if (b.id === 'olLeave') { leaveRoom(true); resetState(); render(); renderOnline(); }
+});
+$('#inv').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.act === 'start') inviteStartD();
+  else if (b.dataset.act === 'share') Invite.share(inviteUrlD(), b);
 });
 $('#online').addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'olCode') joinByCode(e.target.value);

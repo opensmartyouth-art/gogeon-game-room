@@ -382,7 +382,16 @@
     else { G.vis = G.pos.slice(); G.note = ''; G.shownRoll = G.phase === 'choose' ? G.roll : 0; render(); }
     renderOnline();
   }
+  const inviteUrl = () => location.origin + location.pathname + '?s=' + O.code;
+  function renderInvite() { Invite.render(q('#sinv'), { avail: typeof Peer !== 'undefined', online: isOn(), busy: O.busy, code: O.code, host: O.isHost, oppOn: O.oppOn }); }
+  async function inviteStart() {
+    if (typeof Peer === 'undefined' || O.busy) return;
+    if (!isOn()) { sc.mode = 'online'; store.set('cg.seung.cfg', JSON.stringify(sc)); renderSet(); onMode(); }
+    if (!O.code) await createRoomS();
+    if (O.code && Invite.canShare()) Invite.share(inviteUrl());
+  }
   function renderOnline() {
+    renderInvite();
     const el = q('#sonline');
     if (!isOn()) { el.hidden = true; return; }
     el.hidden = false;
@@ -395,7 +404,7 @@
         '<button type="button" class="btn" id="sJoin"' + (O.busy ? ' disabled' : '') + '>들어가기</button></div>' +
         '<p class="hint">한 사람이 방을 만들고 링크(또는 4자리 코드)를 보내면, 상대가 열어서 바로 들어와요. 방을 만든 사람이 페이지를 닫으면 방도 닫혀요.</p>';
     } else {
-      h += '<div class="olcodebox"><span class="olcode" id="sShown">' + O.code + '</span><button type="button" class="btn" id="sCopy">링크 복사</button></div>' +
+      h += '<div class="olcodebox"><span class="olcode" id="sShown">' + O.code + '</span><button type="button" class="btn primary" id="sShare">공유하기</button><button type="button" class="btn" id="sCopy">링크 복사</button></div>' +
         '<p class="olst">내 말: ' + (O.seat === 1 ? '홍' : O.seat === 2 ? '청' : '관람') + '</p>' +
         '<div class="row"><button type="button" class="btn" id="sLeave">방 나가기</button></div>';
     }
@@ -521,11 +530,17 @@
     const b = e.target.closest('button'); if (!b) return;
     if (b.id === 'sNew') createRoomS();
     else if (b.id === 'sJoin') joinS(q('#sCode').value);
+    else if (b.id === 'sShare') Invite.share(inviteUrl(), b);
     else if (b.id === 'sCopy') {
       const url = location.origin + location.pathname + '?s=' + O.code;
       const done = () => { b.textContent = '복사됨'; setTimeout(() => { b.textContent = '링크 복사'; }, 1500); };
       try { navigator.clipboard.writeText(url).then(done, () => {}); } catch (err) { /* 무시 */ }
     } else if (b.id === 'sLeave') { leaveS(); reset(); render(); renderOnline(); }
+  });
+  q('#sinv').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.act === 'start') inviteStart();
+    else if (b.dataset.act === 'share') Invite.share(inviteUrl(), b);
   });
   q('#sonline').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'sCode') joinS(e.target.value); });
 

@@ -267,6 +267,18 @@ button { font-family: inherit; }
   .panel .settings { margin-top: 8px; }
 }
 
+
+/* 친구 초대 */
+.invite { margin: 0 0 12px; }
+.invite[hidden] { display: none; }
+.invbtn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--card); }
+.invbtn small { color: var(--ink-2); font-size: 12px; font-weight: 400; }
+.invwait { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--accent); border-radius: var(--r-lg); background: color-mix(in srgb, var(--accent) 10%, var(--card)); }
+.invwait span { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.invwait small { color: var(--ink-2); font-size: 12px; letter-spacing: 0.06em; }
+.invtxt { margin: 0; padding: 12px 0; text-align: center; color: var(--ink-2); font-size: 14px; }
+.olcodebox { flex-wrap: wrap; }
+
 /* 튜토리얼 */
 .top .tutq { margin-left: auto; width: 40px; min-height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); font-size: 17px; font-weight: 700; cursor: pointer; flex: none; }
 .top .tutq + .gear { margin-left: 0; }
@@ -390,6 +402,7 @@ body.tutopen { overflow: hidden; }
         </div>
       </div>
       <div class="side">
+        <div class="invite" id="inv" hidden></div>
         <div class="row">
           <button type="button" class="btn" id="undo">되돌리기</button>
           <button type="button" class="btn primary" id="again">새 게임</button>
@@ -450,6 +463,7 @@ body.tutopen { overflow: hidden; }
         </div>
       </div>
       <div class="side">
+        <div class="invite" id="oinv" hidden></div>
         <div class="row">
           <button type="button" class="btn" id="oundo">무르기</button>
           <button type="button" class="btn primary" id="oagain">새 게임</button>
@@ -517,6 +531,7 @@ body.tutopen { overflow: hidden; }
         </div>
       </div>
       <div class="side">
+        <div class="invite" id="sinv" hidden></div>
         <div class="row">
           <button type="button" class="btn primary" id="sagain">새 게임</button>
           <p class="count" id="scount"></p>
