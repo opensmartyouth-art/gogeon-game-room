@@ -176,6 +176,31 @@
       '<rect x="40" y="' + (22 + i * 38) + '" width="200" height="30" rx="15" fill="var(--surface)" stroke="var(--line)"/><text x="140" y="' + (42 + i * 38) + '" text-anchor="middle" fill="var(--ink)">' + t + '</text>').join('') + '</g>');
 
 
+
+  /* ----- 알까기 ----- */
+  const alBoard = (inner) => W(panel('<rect x="54" y="14" width="172" height="122" rx="8" fill="#C99A55" stroke="#5B3F1E" stroke-width="2.4"/>' + inner));
+  const alPull = () => alBoard(
+    marble(140, 96, 'red') + '<path d="M140 96 L140 124" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" opacity="0.55"/>' +
+    '<path d="M140 80 L140 38" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/>' +
+    '<path d="M132 46 L140 36 L148 46" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="140" cy="128" r="9" fill="none" stroke="var(--gold)" stroke-width="2.4"/>' +
+    lbl(188, 120, '뒤로 당기기', 'middle', '#2B1D0D'));
+  const alOut = () => W(panel(
+    '<rect x="40" y="30" width="130" height="90" rx="8" fill="#C99A55" stroke="#5B3F1E" stroke-width="2.4"/>' +
+    marble(110, 76, 'red') + marble(160, 52, 'blue') +
+    '<path d="M122 70 L152 56" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/>' +
+    '<g opacity="0.55"><circle cx="200" cy="40" r="9" fill="var(--blue)"/></g><path d="M172 50 L196 42" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>' +
+    lbl(232, 66, '판 밖으로', 'middle', 'var(--gold)') + lbl(232, 84, '떨어지면 끝', 'middle', PL)));
+  const alTap = () => alBoard(
+    marble(110, 100, 'red') + '<circle cx="110" cy="100" r="15" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-dasharray="4 3"/>' +
+    marble(172, 46, 'blue') + '<path d="M118 90 L164 54" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 7"/>' +
+    '<circle cx="172" cy="46" r="15" fill="none" stroke="var(--gold)" stroke-width="2.6"/>' +
+    lbl(112, 128, '① 내 돌', 'middle', '#2B1D0D') + lbl(200, 30, '② 보낼 곳', 'middle', '#2B1D0D'));
+  const alWin = () => W(panel(
+    marble(100, 80, 'red') + '<g opacity="0.55"><circle cx="190" cy="52" r="9" fill="var(--blue)"/><circle cx="214" cy="92" r="9" fill="var(--blue)"/></g>' +
+    lbl(100, 116, '내 돌이 남으면', 'middle', PL) + lbl(200, 116, '상대 돌이 모두 없으면', 'middle', 'var(--gold)') +
+    lbl(140, 24, '내 돌이 떨어지면 내가 잃어요', 'middle', PL)));
+
   /* ----- 윷놀이 ----- */
   const ystk = (x, flat) => '<rect x="' + x + '" y="30" width="26" height="70" rx="13" fill="' + (flat ? '#E6C48C' : '#8B5E2B') + '" stroke="#6B4A22" stroke-width="2"/>' + (flat ? '<path d="M' + (x + 6) + ' 52h14M' + (x + 6) + ' 65h14M' + (x + 6) + ' 78h14" stroke="#8A6A3A" stroke-width="2.2" stroke-linecap="round" opacity="0.6"/>' : '');
   const yutThrow = () => W(panel(
@@ -227,6 +252,12 @@
       { t: '움직이기', d: '말을 누르면 갈 수 있는 곳에 <b>노란 점</b>이 떠요. 선을 따라 <b>이웃한 빈 점</b>으로 한 칸씩 가요. 번갈아 한 번씩 움직여요.', a: hbMove },
       { t: '돌아갈 수 없어요', d: '한 번 <b>집을 떠난 말</b>은 내 집이든 상대 집이든 <b>다시 들어갈 수 없어요</b>. 아직 집에 있는 말만 집에 머물러요.', a: hbNoBack },
       { t: '막아서 이겨요', d: '내 차례에 <b>움직일 수 있는 말이 하나도 없으면</b> 져요. 100수가 넘도록 승부가 안 나면 비겨요.', a: hbBlock }
+    ],
+    algakki: [
+      { t: '돌 튕기기', d: '내 돌을 <b>손가락으로 눌러 뒤로 당겼다가 놓으세요.</b> 당긴 반대쪽으로 날아가고, 많이 당길수록 세게 가요. 점선이 가는 길을 보여줘요.', a: alPull },
+      { t: '밀어내서 이겨요', d: '상대 돌을 맞혀서 <b>판 밖으로 떨어뜨리면</b> 돼요. 상대 돌이 모두 없어지면 이겨요. 내 돌이 떨어지면 내가 잃어요.', a: alOut },
+      { t: '누르기로도 돼요', d: '당기기 어려우면 <b>내 돌을 한 번 눌러 고르고</b>, 이어서 <b>보낼 곳을 눌러도</b> 돼요. 누른 곳 쪽으로 알맞게 튕겨요.', a: alTap },
+      { t: '차례와 승부', d: '돌이 모두 멈추면 <b>상대 차례</b>예요. 한 번씩 번갈아 튕겨요. 서로 마지막 돌이 함께 떨어지면 비겨요.', a: alWin }
     ],
     yut: [
       { t: '윷 던지기', d: '<b>윷 던지기</b> 버튼으로 윷가락 네 개를 던져요. 평평한 면이 나온 수가 도(1)·개(2)·걸(3)·윷(4)이고, 모두 엎어지면 <b>모(5)</b>예요.', a: yutThrow },

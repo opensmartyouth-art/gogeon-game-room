@@ -1050,6 +1050,11 @@ function miniYut() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="8" y="8" width="44" height="44" rx="3" ' + c + '/><path d="M8 8L52 52M52 8L8 52" ' + c + '/>' +
     '<circle cx="8" cy="8" r="3.4" fill="var(--bg)" ' + c + '/><circle cx="52" cy="8" r="3.4" fill="var(--bg)" ' + c + '/><circle cx="8" cy="52" r="5" fill="var(--red)"/><circle cx="52" cy="52" r="3.4" fill="var(--bg)" ' + c + '/><circle cx="30" cy="30" r="5.4" fill="var(--blue)"/></svg>';
 }
+function miniAlgakki() {
+  const c = 'stroke="var(--mini)" stroke-width="2.2" fill="none"';
+  return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="4" ' + c + '/>' +
+    '<circle cx="20" cy="42" r="6.5" fill="var(--red)"/><circle cx="40" cy="20" r="6.5" fill="var(--blue)"/><path d="M24 37 L34 27" stroke="var(--gold)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 5"/></svg>';
+}
 function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
@@ -1059,7 +1064,8 @@ const GAMES = [
   { id: 'omok', name: '오목', sub: '다섯 줄을 만들어요', ready: true, mini: miniOmok },
   { id: 'hobak', name: '호박고누', sub: '막아서 이겨요', ready: true, mini: miniHobak },
   { id: 'solitaire', name: '솔리테어', sub: '카드를 모두 쌓아요', ready: true, mini: miniSolitaire },
-  { id: 'yut', name: '윷놀이', sub: '말을 먼저 돌려요', ready: true, mini: miniYut }
+  { id: 'yut', name: '윷놀이', sub: '말을 먼저 돌려요', ready: true, mini: miniYut },
+  { id: 'algakki', name: '알까기', sub: '튕겨서 밀어내요', ready: true, mini: miniAlgakki }
 ];
 function renderHub() {
   $('#games').innerHTML = GAMES.map(g =>
@@ -1125,6 +1131,7 @@ function show(v) {
   const hv = $('#view-hobak'); if (hv) hv.hidden = v !== 'hobak';
   const lv = $('#view-solitaire'); if (lv) lv.hidden = v !== 'solitaire';
   const yv = $('#view-yut'); if (yv) yv.hidden = v !== 'yut';
+  const av = $('#view-algakki'); if (av) av.hidden = v !== 'algakki';
   if (v === 'omok') {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.omokEnter) window.omokEnter();
@@ -1145,12 +1152,16 @@ function show(v) {
     token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
     if (window.yutEnter) window.yutEnter();
   } else if (window.yutLeave) window.yutLeave();
+  if (v === 'algakki') {
+    token++; S.busy = false; S.think = false; S.anim = null; S.drag = null;
+    if (window.algakkiEnter) window.algakkiEnter();
+  } else if (window.algakkiLeave) window.algakkiLeave();
   if (v === 'diamond') {
     if (S.busy && S.think) { S.busy = false; S.think = false; }
     render();
     maybeAI();
     tryRemote();
-  } else if (v !== 'omok' && v !== 'seung' && v !== 'hobak' && v !== 'solitaire' && v !== 'yut') {
+  } else if (v !== 'omok' && v !== 'seung' && v !== 'hobak' && v !== 'solitaire' && v !== 'yut' && v !== 'algakki') {
     token++;
     S.busy = false; S.think = false; S.anim = null; S.drag = null;
   }

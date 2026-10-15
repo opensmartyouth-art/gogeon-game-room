@@ -505,6 +505,21 @@ body { overflow-anchor: none; }
 .back { display: inline-grid; }
 .top .tutq { display: inline-grid; font-size: 24px; font-weight: 700; line-height: 1; }
 .top .tutq + .gear { margin-left: 0; }
+
+/* 알까기 */
+#aboard { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: grab; }
+#aboard .asel { fill: none; stroke: var(--gold); stroke-width: 3; stroke-dasharray: 5 4; }
+#aboard .aguide { stroke: var(--gold); stroke-width: 3; stroke-dasharray: 2 7; stroke-linecap: round; }
+#aboard .aband { stroke: var(--gold); stroke-width: 6; stroke-linecap: round; opacity: 0.55; }
+#aboard .ahit { fill: color-mix(in srgb, var(--gold) 28%, transparent); stroke: var(--gold); stroke-width: 2.6; }
+#aboard .aend { fill: var(--gold); }
+@media (orientation: landscape) and (max-height: 600px) { #aboard { height: calc(100vh - 80px); height: calc(100dvh - 80px); width: auto; max-width: 56vw; } }
+@media (max-width: 819px) and (orientation: portrait) {
+  #aboard { width: auto; max-width: 100%; height: min(calc(100vw - 32px), max(280px, calc(100dvh - var(--dock-h, 90px) - 136px))); }
+  #view-algakki .top { margin-bottom: 6px; }
+  #view-algakki .players { gap: 6px; }
+  #view-algakki .pl { padding: 8px 12px; }
+}
 </style>
 </head>
 <body>
@@ -816,6 +831,53 @@ body { overflow-anchor: none; }
       </div>
     </div>
   </section>
+  <section id="view-algakki" hidden>
+    <div class="top">
+      <button type="button" class="back" id="abk" data-ask="leave" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <h2 class="gtitle">알까기</h2>
+      <button type="button" class="tutq tutbtn" data-t="algakki" aria-label="게임 방법 보기" title="게임 방법">?</button>
+      <button type="button" class="gear" data-p="apanel" aria-expanded="false" aria-label="설정" title="설정"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="layout">
+      <div class="stage">
+        <div class="players">
+          <div class="pl" id="apl1"><span class="dot p1"></span><div><b id="apn1">나</b><small id="aps1"></small></div></div>
+          <div class="pl" id="apl2"><span class="dot p2"></span><div><b id="apn2">컴퓨터</b><small id="aps2"></small></div></div>
+        </div>
+        <p class="say" id="asay" aria-live="polite"></p>
+        <div class="boardwrap">
+          <svg id="aboard" viewBox="16 16 288 288" role="group" aria-label="알까기 판. 내 돌을 뒤로 당겼다 놓으면 앞으로 튕겨요">
+            <defs>
+              <radialGradient id="gAR" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#F0B49C"/><stop offset="0.55" stop-color="#CC785C"/><stop offset="1" stop-color="#A9583E"/></radialGradient>
+              <radialGradient id="gAB" cx="0.35" cy="0.3" r="0.85"><stop offset="0" stop-color="#A9C3EA"/><stop offset="0.55" stop-color="#4F7DBF"/><stop offset="1" stop-color="#34598F"/></radialGradient>
+              <linearGradient id="gAwood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--wood-hi)"/><stop offset="1" style="stop-color:var(--wood-lo)"/></linearGradient>
+            </defs>
+            <g id="abg"></g><g id="adyn"></g><g id="afx" pointer-events="none"></g>
+          </svg>
+          <div class="result" id="aresult" hidden>
+            <div class="rbox">
+              <p class="rtitle" id="artitle"></p>
+              <p class="rsub" id="arsub"></p>
+              <div class="row">
+                <button type="button" class="btn primary" id="arAgain">한 판 더</button>
+                <button type="button" class="btn" id="arView">판 보기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side dock">
+        <div class="row">
+          <button type="button" class="btn primary" id="aagain" data-ask="new">새 게임</button>
+          <p class="count" id="acount"></p>
+        </div>
+        <div class="panel" id="apanel"><div class="phd"><b>설정</b><button type="button" class="pclose" aria-label="닫기">닫기</button></div>
+          <div class="settings" id="asettings"></div>
+          <button type="button" class="btn tutbtn tutagain" data-t="algakki">튜토리얼 다시 보기</button>
+        </div>
+      </div>
+    </div>
+  </section>
   <section id="view-seung" hidden>
     <div class="top">
       <button type="button" class="back" id="sbk" aria-label="게임 목록으로 나가기" title="게임 목록"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
@@ -918,5 +980,6 @@ body { overflow-anchor: none; }
 <script src="hobak.js"></script>
 <script src="solitaire.js"></script>
 <script src="yut.js"></script>
+<script src="algakki.js"></script>
 </body>
 </html>
