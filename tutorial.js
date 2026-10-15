@@ -201,7 +201,7 @@
   });
   window.Tut = {
     /* 게임 화면에 들어올 때: 처음이면 필수로 띄운다 */
-    enter(id) { if (STEPS[id] && !seen(id)) open(id, true); },
+    enter(id) { if (window.__noTut) return; if (STEPS[id] && !seen(id)) open(id, true); },
     open, seen
   };
 })();

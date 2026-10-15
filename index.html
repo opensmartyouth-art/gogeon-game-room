@@ -279,6 +279,25 @@ button { font-family: inherit; }
 .invtxt { margin: 0; padding: 12px 0; text-align: center; color: var(--ink-2); font-size: 14px; }
 .olcodebox { flex-wrap: wrap; }
 
+
+/* 초대 입장 · 만료 안내 */
+.joinbox { margin: 22px 0 0; max-width: 640px; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); display: flex; flex-direction: column; gap: 8px; }
+.joinbox label { font-weight: 500; font-size: 15px; }
+.joinbox .olinput { background: var(--bg); }
+.joinbg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: var(--bg); }
+.joinbg[hidden] { display: none; }
+.jcard { width: min(400px, 100%); display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.jicon { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: var(--card); border: 1px solid var(--line); margin-bottom: 6px; }
+.jicon .dot { width: 30px; height: 30px; }
+.jicon svg { display: block; }
+.jspin { width: 30px; height: 30px; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: jspin 0.8s linear infinite; }
+@keyframes jspin { to { transform: rotate(360deg); } }
+.jtitle { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.2; letter-spacing: -0.03em; }
+.jdesc { margin: 0; color: var(--ink-2); text-wrap: pretty; }
+.jchip { display: inline-block; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: 13px; letter-spacing: 0.12em; color: var(--ink-2); }
+.jrow { display: flex; gap: 10px; width: 100%; margin-top: 16px; }
+.jrow .btn { flex: 1; }
+
 /* 튜토리얼 */
 .top .tutq { margin-left: auto; width: 40px; min-height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); font-size: 17px; font-weight: 700; cursor: pointer; flex: none; }
 .top .tutq + .gear { margin-left: 0; }
@@ -359,6 +378,14 @@ body.tutopen { overflow: hidden; }
   <section id="view-hub">
     <h1 class="brand">고전게임방</h1>
     <p class="lede">판 위에서 둘이 겨루는 옛 놀이를 모았어요. 컴퓨터와 겨루거나 한 화면에서 둘이 할 수 있어요.</p>
+    <form class="joinbox" id="homeJoin" autocomplete="off">
+      <label for="homeCode">초대 코드가 있나요?</label>
+      <div class="row olin">
+        <input id="homeCode" class="olinput" type="text" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="코드 4자리">
+        <button type="submit" class="btn primary">입장</button>
+      </div>
+      <p class="hint warn" id="homeJoinErr" role="alert" hidden></p>
+    </form>
     <ul class="games" id="games"></ul>
   </section>
 
@@ -558,6 +585,7 @@ body.tutopen { overflow: hidden; }
 </div>
 
 
+<div id="join" class="joinbg" hidden role="dialog" aria-modal="true" aria-live="polite"></div>
 <div id="tut" class="tutbg" hidden role="dialog" aria-modal="true" aria-labelledby="ttitle">
   <div class="tcard">
     <div class="tart"></div>

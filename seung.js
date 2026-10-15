@@ -383,7 +383,7 @@
     renderOnline();
   }
   const inviteUrl = () => location.origin + location.pathname + '?s=' + O.code;
-  function renderInvite() { Invite.render(q('#sinv'), { avail: typeof Peer !== 'undefined', online: isOn(), busy: O.busy, code: O.code, host: O.isHost, oppOn: O.oppOn }); }
+  function renderInvite() { Invite.render(q('#sinv'), { note: '나는 홍, 친구는 청이에요', avail: typeof Peer !== 'undefined', online: isOn(), busy: O.busy, code: O.code, host: O.isHost, oppOn: O.oppOn }); }
   async function inviteStart() {
     if (typeof Peer === 'undefined' || O.busy) return;
     if (!isOn()) { sc.mode = 'online'; store.set('cg.seung.cfg', JSON.stringify(sc)); renderSet(); onMode(); }
@@ -417,7 +417,7 @@
     try {
       let peer = null, code = '';
       for (let i = 0; i < 6 && !peer; i++) {
-        code = newCode();
+        code = newCode('s');
         peer = await openPeer(PFXS + code).catch(e => { if (e && e.type === 'unavailable-id') return null; throw e; });
       }
       if (!peer) throw new Error('code');
@@ -435,6 +435,7 @@
     Object.assign(O, { code, peer, isHost: true, seat: 1, oppOn: false });
     peer.on('error', () => { O.err = '연결에 문제가 생겼어요. 방을 다시 만들어 주세요.'; renderOnline(); });
     peer.on('disconnected', () => { try { peer.reconnect(); } catch (e) { /* 무시 */ } });
+    Beat.host(peer, () => [O.guest].concat(O.watchers));
     peer.on('connection', c => {
       c.on('open', () => {
         let seat = 0;
@@ -456,6 +457,7 @@
     if (O.busy) return;
     if (!/^[a-z0-9]{4}$/.test(code)) { O.err = '방 코드는 4자리예요.'; renderOnline(); return; }
     O.busy = true; O.err = ''; renderOnline();
+    Join.joining('seung');
     let peer = null;
     try {
       peer = await openPeer(null);
@@ -467,8 +469,10 @@
         c.on('error', e => { clearTimeout(t); rej(e); });
       });
       enterGuestS(code, peer, hello.c, hello.m);
+      Join.joined('seung', O.seat);
     } catch (e) {
       try { if (peer) peer.destroy(); } catch (x) { /* 무시 */ }
+      Join.failed('seung', code, e && e.type === 'peer-unavailable' ? 'gone' : 'net', () => joinS(code));
       O.err = e && e.type === 'peer-unavailable' ? '그 코드의 방이 없어요. 코드를 다시 확인해 주세요.' : '방에 연결하지 못했어요. 방장이 페이지를 열어 둔 상태인지 확인해 주세요.';
     }
     O.busy = false; renderOnline();
@@ -477,8 +481,9 @@
     leaveS(); reset();
     Object.assign(O, { code, peer, isHost: false, conn: c, seat: hello.seat, oppOn: true });
     c.on('data', m => { if (m && m.t === 'doc' && m.d) onDocS(m.d, false); });
-    c.on('close', () => { O.oppOn = false; O.err = '방장과 연결이 끊어졌어요. 방을 나갔다가 다시 들어와 보세요.'; renderOnline(); renderStatus(); });
+    c.on('close', () => { const mine = O.conn === c; O.oppOn = false; O.err = '방장과 연결이 끊어졌어요. 방을 나갔다가 다시 들어와 보세요.'; renderOnline(); renderStatus(); if (mine) Join.closed('seung', code, () => joinS(code), () => { leaveS(); reset(); render(); renderOnline(); }); });
     peer.on('error', () => { O.err = '연결에 문제가 생겼어요.'; renderOnline(); });
+    Beat.guest(c, peer);
     G.n = -1; onDocS(hello.doc, true);
     render(); renderOnline();
   }
@@ -545,6 +550,7 @@
   q('#sonline').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'sCode') joinS(e.target.value); });
 
   window.seungSettings = function () { renderSet(); };
+  window.seungJoin = function (code) { sc.mode = 'online'; show('seung'); joinS(code); };
   window.seungEnter = function () {
     renderSet();
     if (wantOnlineS) { wantOnlineS = false; if (typeof Peer !== 'undefined') { sc.mode = 'online'; renderSet(); onMode(); return; } }
@@ -559,9 +565,11 @@
   try {
     const r = new URLSearchParams(location.search).get('s');
     if (r && /^[a-z0-9]{4}$/i.test(r) && typeof Peer !== 'undefined') {
+      Join.setOrigin('link');
+      Join.joining('seung');
       sc.mode = 'online';
       show('seung');
-      joinS(r);
+      joinS(r.toLowerCase());
       try { history.replaceState(null, '', location.pathname); } catch (e) { /* 무시 */ }
     }
   } catch (e) { /* 무시 */ }

@@ -403,11 +403,12 @@ function renderSettings() {
 const enc = b => Array.prototype.join.call(b, '');
 const dec = s => Int8Array.from(String(s).split(''), Number);
 const CODE_CHARS = 'abcdefghjkmnpqrstuvwxyz23456789';
-const newCode = () => { let s = ''; for (let i = 0; i < 4; i++) s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]; return s; };
+/* 코드 첫 글자가 게임을 알려 준다(d 다이아몬드, m 오목, s 승경도). 홈에서 코드만 넣어도 맞는 게임으로 들어가기 위해서다. */
+const newCode = mark => { let s = mark || ''; while (s.length < 4) s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]; return s; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const inviteUrlD = () => location.origin + location.pathname + '?r=' + OL.code;
-function renderInvite() { Invite.render($('#inv'), { avail: onlineOK(), online: isOnline(), busy: OL.busy, code: OL.code, host: OL.isHost, oppOn: OL.oppOn }); }
+function renderInvite() { Invite.render($('#inv'), { note: '나는 빨강, 친구는 파랑이에요', avail: onlineOK(), online: isOnline(), busy: OL.busy, code: OL.code, host: OL.isHost, oppOn: OL.oppOn }); }
 async function inviteStartD() {
   if (!onlineOK() || OL.busy) return;
   if (!isOnline()) { cfg.mode = 'online'; store.set('cg.diamond.cfg', JSON.stringify(cfg)); renderSettings(); onModeChange(); }
@@ -465,11 +466,91 @@ const Invite = (function () {
     if (!st.avail) h = '';
     else if (st.busy) h = '<p class="invtxt">방을 만드는 중…</p>';
     else if (!st.online || !st.code) h = '<button type="button" class="btn invbtn" data-act="start">친구와 하기 <small>링크를 보내 초대해요</small></button>';
-    else if (st.host && !st.oppOn) h = '<div class="invwait"><span><b>친구를 기다리는 중</b><small>방 코드 ' + st.code + '</small></span><button type="button" class="btn primary" data-act="share">친구에게 공유</button></div>';
+    else if (st.host && !st.oppOn) h = '<div class="invwait"><span><b>친구를 기다리는 중</b><small>방 코드 ' + st.code + '</small>' + (st.note ? '<small>' + st.note + '</small>' : '') + '</span><button type="button" class="btn primary" data-act="share">친구에게 공유</button></div>';
     if (el.innerHTML !== h) el.innerHTML = h;
     el.hidden = !h;
   }
   return { share, render, canShare };
+})();
+
+
+
+/* 연결 감시: 방장이 4초마다 신호를 보내고, 친구 쪽은 13초 넘게 조용하면 방이 닫힌 것으로 본다(탭을 그냥 닫았을 때 빨리 알아채려는 용도) */
+const Beat = {
+  host(peer, targets) {
+    const t = setInterval(() => { if (peer.destroyed) { clearInterval(t); return; } targets().forEach(c => sendTo(c, { t: 'ping' })); }, 4000);
+  },
+  guest(c, peer) {
+    let seen = Date.now();
+    c.on('data', () => { seen = Date.now(); });
+    const t = setInterval(() => {
+      if (peer.destroyed || !c.open) { clearInterval(t); return; }
+      if (Date.now() - seen > 13000) { clearInterval(t); try { c.close(); } catch (e) { /* 무시 */ } }
+    }, 2000);
+  }
+};
+
+/* ---------- 초대 입장 · 만료 안내 화면 (세 게임 공용) ---------- */
+const Join = (function () {
+  const GAMES = {
+    diamond: { name: '다이아몬드 게임', seats: { 1: ['p1', '빨강'], 2: ['p2', '파랑'] }, mine: n => '내 구슬은 ' + n + '이에요', first: '방장(빨강)이 먼저 시작해요.' },
+    omok: { name: '오목', seats: { 1: ['sb', '흑'], 2: ['sw', '백'] }, mine: n => '내 돌은 ' + n + '이에요', first: '방장(흑)이 먼저 둬요.' },
+    seung: { name: '승경도', seats: { 1: ['p1', '홍'], 2: ['p2', '청'] }, mine: n => '내 말은 ' + n + '이에요', first: '방장(홍)이 먼저 굴려요.' }
+  };
+  const ICON_X = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>';
+  let timer = 0, cb = {}, origin = '';
+  const el = () => document.getElementById('join');
+  function put(icon, title, desc, chip, btns) {
+    clearTimeout(timer);
+    const e = el();
+    e.innerHTML = '<div class="jcard"><div class="jicon">' + icon + '</div><h2 class="jtitle">' + title + '</h2>' +
+      (desc ? '<p class="jdesc">' + desc + '</p>' : '') + (chip ? '<span class="jchip">' + chip + '</span>' : '') +
+      (btns ? '<div class="jrow">' + btns + '</div>' : '') + '</div>';
+    e.hidden = false; window.__noTut = true; document.body.classList.add('tutopen');
+  }
+  function hide(skipTut) {
+    clearTimeout(timer);
+    const e = el(); e.hidden = true; e.innerHTML = '';
+    document.body.classList.remove('tutopen'); window.__noTut = false;
+    if (!skipTut && view !== 'hub' && window.Tut) window.Tut.enter(view);
+  }
+  const btn = (act, label, primary) => '<button type="button" class="btn' + (primary ? ' primary' : '') + '" data-act="' + act + '">' + label + '</button>';
+  function joining(game) {
+    put('<div class="jspin"></div>', '친구가 초대했어요', GAMES[game].name + ' 방에 들어가는 중이에요…', '', '');
+  }
+  function joined(game, seat) {
+    const g = GAMES[game];
+    if (!seat) { put('<div class="jicon-t">👀</div>', '구경하러 들어왔어요', '이미 두 사람이 하고 있어서 지켜볼 수 있어요.', '', btn('go', '들어가기', true)); }
+    else {
+      const sd = g.seats[seat];
+      put('<span class="dot ' + sd[0] + '"></span>', '입장했어요!', g.mine(sd[1]) + '.<br>' + g.first, '', btn('go', '시작', true));
+    }
+    timer = setTimeout(() => hide(), 2200);
+  }
+  function fail(game, code, kind, retry, leave) {
+    cb = { retry, leave };
+    const gone = kind === 'gone', closed = kind === 'closed';
+    put(ICON_X,
+      closed ? '방이 닫혔어요' : gone ? '방을 찾을 수 없어요' : '연결하지 못했어요',
+      closed ? '방장이 나갔거나 연결이 끊어졌어요.<br>방장에게 새 링크를 받아 다시 들어와 보세요.'
+        : gone ? '방장이 방을 닫았거나 링크가 오래됐어요.<br>방장에게 새 링크를 받아 주세요.'
+        : '인터넷 연결을 확인하고 다시 시도해 보세요.<br>방장이 화면을 켜 둔 상태여야 해요.',
+      code ? '코드 ' + code : '', btn('home', '홈으로') + btn('retry', '다시 시도', true));
+  }
+  function setOrigin(o) { origin = o; }
+  el().addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const act = b.dataset.act;
+    if (act === 'go') hide();
+    else if (act === 'retry') { hide(true); if (cb.retry) cb.retry(); }
+    else if (act === 'home') {
+      hide(true);
+      try { if (cb.leave) cb.leave(); } catch (x) { /* 무시 */ }
+      show('hub');
+      if (origin === 'home') { const i = document.getElementById('homeCode'); if (i) { i.focus(); i.select(); } }
+    }
+  });
+  return { joining, joined, failed: (g, c, k, r, l) => fail(g, c, k, r, l), closed: (g, c, r, l) => fail(g, c, 'closed', r, l), hide, setOrigin };
 })();
 
 /* ---------- P2P 연결 (PeerJS): 방장이 상태를 쥐고, 친구와 직접 주고받는다 ---------- */
@@ -504,7 +585,7 @@ async function createRoom() {
   try {
     let peer = null, code = '';
     for (let i = 0; i < 6 && !peer; i++) {
-      code = newCode();
+      code = newCode('d');
       peer = await openPeer(PFX + code).catch(e => { if (e && e.type === 'unavailable-id') return null; throw e; });
     }
     if (!peer) throw new Error('code');
@@ -521,6 +602,7 @@ function enterHost(code, peer) {
   flip = false;
   peer.on('error', () => { OL.err = '연결에 문제가 생겼어요. 방을 다시 만들어 주세요.'; renderOnline(); });
   peer.on('disconnected', () => { try { peer.reconnect(); } catch (e) { /* 무시 */ } });
+  Beat.host(peer, () => [OL.guest].concat(OL.watchers));
   peer.on('connection', c => {
     c.on('open', () => {
       let seat = 0;
@@ -549,6 +631,7 @@ async function joinByCode(raw) {
   if (OL.busy) return;
   if (!/^[a-z0-9]{4}$/.test(code)) { OL.err = '방 코드는 4자리예요.'; renderOnline(); return; }
   OL.busy = true; OL.err = ''; renderOnline();
+  Join.joining('diamond');
   let peer = null;
   try {
     peer = await openPeer(null);
@@ -560,8 +643,10 @@ async function joinByCode(raw) {
       c.on('error', e => { clearTimeout(t); rej(e); });
     });
     enterGuest(code, peer, hello.c, hello.m);
+    Join.joined('diamond', OL.seat);
   } catch (e) {
     try { if (peer) peer.destroy(); } catch (x) { /* 무시 */ }
+    Join.failed('diamond', code, e && e.type === 'peer-unavailable' ? 'gone' : 'net', () => joinByCode(code));
     OL.err = e && e.type === 'peer-unavailable' ? '그 코드의 방이 없어요. 코드를 다시 확인해 주세요.' : '방에 연결하지 못했어요. 방장이 페이지를 열어 둔 상태인지 확인해 주세요.';
   }
   OL.busy = false; renderOnline();
@@ -577,8 +662,9 @@ function enterGuest(code, peer, c, hello) {
     if (m.t === 'doc' && m.d) onDoc({ exists: true, data: () => m.d });
     else if (m.t === 'lift') { const v = typeof m.i === 'number' ? m.i : null; if (v !== S.oppLift) { S.oppLift = v; if (!drag && !S.busy) render(); } }
   });
-  c.on('close', () => { OL.oppOn = false; OL.err = '방장과 연결이 끊어졌어요. 방을 나갔다가 다시 들어와 보세요.'; renderOnline(); renderStatus(); });
+  c.on('close', () => { const mine = OL.conn === c; OL.oppOn = false; OL.err = '방장과 연결이 끊어졌어요. 방을 나갔다가 다시 들어와 보세요.'; renderOnline(); renderStatus(); if (mine) Join.closed('diamond', code, () => joinByCode(code), () => { leaveRoom(true); resetState(); render(); renderOnline(); }); });
   peer.on('error', () => { OL.err = '연결에 문제가 생겼어요.'; renderOnline(); });
+  Beat.guest(c, peer);
   store.set('cg.diamond.room', '');
   onDoc({ exists: true, data: () => hello.doc });
   render();
@@ -1036,6 +1122,27 @@ $('#online').addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'olCode') joinByCode(e.target.value);
 });
 
+/* ---------- 초대로 들어오기: 링크와 홈의 코드 입력이 같은 길을 탄다 ---------- */
+function startJoin(game, code) {
+  Join.joining(game);
+  if (game === 'diamond') { cfg.mode = 'online'; renderSettings(); show('diamond'); onModeChange(); joinByCode(code); }
+  else if (game === 'omok' && window.omokJoin) window.omokJoin(code);
+  else if (game === 'seung' && window.seungJoin) window.seungJoin(code);
+  else Join.hide(true);
+}
+$('#homeJoin').addEventListener('submit', e => {
+  e.preventDefault();
+  const code = String($('#homeCode').value || '').trim().toLowerCase();
+  const game = { d: 'diamond', m: 'omok', s: 'seung' }[code[0]];
+  const err = $('#homeJoinErr');
+  const bad = t => { err.textContent = t; err.hidden = false; };
+  if (!/^[a-z0-9]{4}$/.test(code) || !game) return bad('코드는 4자리예요. 다시 확인해 주세요.');
+  if (!onlineOK()) return bad('지금은 온라인 연결을 쓸 수 없는 환경이에요.');
+  err.hidden = true;
+  Join.setOrigin('home');
+  startJoin(game, code);
+});
+
 /* ---------- 시작 ---------- */
 function onCaps() {
   renderSettings();
@@ -1068,8 +1175,8 @@ function loadCaps() {
   try {
     const r = new URLSearchParams(location.search).get('r');
     if (r && /^[a-z0-9]{4}$/i.test(r) && onlineOK()) {
-      cfg.mode = 'online'; renderSettings(); show('diamond'); onModeChange();
-      joinByCode(r);
+      Join.setOrigin('link');
+      startJoin('diamond', r.toLowerCase());
       try { history.replaceState(null, '', location.pathname); } catch (e) { /* 무시 */ }
     }
   } catch (e) { /* 무시 */ }
