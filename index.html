@@ -231,7 +231,7 @@ button { font-family: inherit; }
 .rtitle.wb { color: var(--ink); } .rtitle.ww { color: var(--ink-2); }
 
 /* 호박고누 */
-#hboard { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+#hboard { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .hrim { fill: color-mix(in srgb, var(--gold) 70%, var(--board-edge)); }
 .hbd { fill: var(--board); }
 .hln { fill: none; stroke: #8A8378; stroke-width: 1.6; }
@@ -409,7 +409,7 @@ body.tutopen { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* 윷놀이 */
-#yboard { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+#yboard { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 #yboard .ypc.can { cursor: pointer; }
 #yboard .ypc.sel circle:nth-of-type(1) { stroke: var(--gold); stroke-width: 3; }
 #yboard .yhit { fill: color-mix(in srgb, var(--gold) 30%, transparent); stroke: var(--gold); stroke-width: 2.6; stroke-dasharray: 5 4; cursor: pointer; }
@@ -429,8 +429,25 @@ body.tutopen { overflow: hidden; }
 .ytray { font-variant-numeric: tabular-nums; }
 .ytray.t1 { border-color: color-mix(in srgb, var(--red) 50%, var(--line)); }
 .ytray.t2 { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
+.pl.canw { cursor: pointer; }
+.pl.canw:active { transform: scale(0.985); }
+#ypl1.sel, #ypl2.sel { box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 55%, transparent); }
 .ytray.sel { box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 45%, transparent); }
 @keyframes ytoss { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-14px) rotate(8deg); } 100% { transform: none; } }
+
+/* 폰 세로 화면: 판이 화면 높이를 넘지 않게 줄여서, 게임 중 페이지가 따로 스크롤되지 않게 해요 */
+html { overflow-anchor: none; }
+body { overflow-anchor: none; }
+@media (max-width: 819px) and (orientation: portrait) {
+  .boardwrap { width: fit-content; margin-left: auto; margin-right: auto; max-width: 100%; }
+  #board { width: auto; max-width: 100%; height: min(calc((100vw - 32px) * 1.157), max(280px, calc(100dvh - 350px))); }
+  #oboard { width: auto; max-width: 100%; height: min(calc(100vw - 32px), max(280px, calc(100dvh - 370px))); }
+  #hboard { width: auto; max-width: 100%; height: min(calc((100vw - 32px) * 1.25), max(280px, calc(100dvh - 350px))); }
+  #yboard { width: auto; max-width: 100%; height: min(calc(100vw - 32px), max(250px, calc(100dvh - 430px))); }
+  .ythrowbox { grid-template-columns: 112px 1fr; margin-top: 6px; padding: 8px 10px; }
+  .ytrays { display: none; }
+  .ylast { min-height: 24px; font-size: 22px; }
+}
 </style>
 </head>
 <body>

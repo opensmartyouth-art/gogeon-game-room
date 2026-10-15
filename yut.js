@@ -188,7 +188,7 @@
     const who = yc.mode === 'local' ? colorName(G.turn) + ' 차례예요. ' : '내 차례예요. ';
     if (G.pending > 0) return who + '윷을 던져 주세요.';
     if (G.pre) return who + '도착할 곳을 눌러 확정해요.';
-    return who + '쓸 윷을 고르고 말을 눌러 주세요.';
+    return who + '쓸 윷을 고르고 말을 눌러 주세요. 새 말은 내 카드를 눌러요.';
   }
   function renderStatus() {
     const nm = names();
@@ -201,6 +201,8 @@
       tray.textContent = '대기 말 ' + wait + '개';
       tray.disabled = !(canAct() && G.turn === p && G.queue.length && wait > 0 && G.pending === 0);
       tray.classList.toggle('sel', !!(G.pre && G.pre.p === p && G.pre.node === WAIT));
+      q('#ypl' + p).classList.toggle('sel', !!(G.pre && G.pre.p === p && G.pre.node === WAIT));
+      q('#ypl' + p).classList.toggle('canw', !tray.disabled);
     }
     q('#ysay').textContent = sayText();
     const btn = q('#ythrow');
@@ -374,11 +376,11 @@
     if (p !== G.turn) return;
     preview(p, n);
   });
-  [1, 2].forEach(p => q('#ytray' + p).addEventListener('click', () => {
+  [1, 2].forEach(p => [q('#ytray' + p), q('#ypl' + p)].forEach(el => el.addEventListener('click', () => {
     audio(); bgmSync();
     if (!canAct() || G.turn !== p || G.pending > 0 || !G.queue.length) return;
     preview(p, WAIT);
-  }));
+  })));
   q('#ychips').addEventListener('click', e => {
     const b = e.target.closest('.ychip'); if (!b || !canAct() || G.pending > 0) return;
     G.chip = +b.dataset.i; G.pre = null; FX.pick(); render();
