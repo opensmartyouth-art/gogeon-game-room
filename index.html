@@ -87,26 +87,29 @@ button { font-family: inherit; }
 /* 홈 */
 .brand { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 10vw, 56px); line-height: 1.05; margin: 8px 0 0; letter-spacing: -0.03em; }
 .brand::after { content: ""; display: block; width: 104px; height: 5px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) 0 34%, var(--gold) 34% 56%, var(--teal) 56% 74%, var(--ink) 74%); }
-.lede { margin: 12px 0 0; max-width: 32em; color: var(--ink-2); text-wrap: pretty; }
-.games { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.games { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 640px; }
+.games li { min-width: 0; }
+.games li.hero { grid-row: span 2; }
+.games li.soon { grid-column: 1 / -1; }
 .game {
-  display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: center;
-  width: 100%; padding: 14px 16px; text-align: left; color: inherit; font: inherit;
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; height: 100%; min-height: 164px; padding: 18px; overflow: hidden; text-align: left; color: inherit; font: inherit;
   background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); cursor: pointer;
+  transition: transform 120ms ease-out, border-color 120ms;
 }
-.game { transition: transform 120ms ease-out, box-shadow 120ms ease-out, border-color 120ms; }
 .game:not([disabled]):hover { border-color: var(--accent); transform: translateY(-1px); }
-.game:not([disabled]):active { transform: translateY(0) scale(0.99); }
+.game:not([disabled]):active { transform: translateY(0) scale(0.98); }
 .btn:not(:disabled):active { transform: scale(0.97); }
 .game[disabled] { cursor: default; background: transparent; border-style: dashed; color: var(--ink-2); }
-.mini { display: grid; place-items: center; width: 64px; }
-.gtext { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.gname { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-family: var(--font-display); font-size: 21px; line-height: 1.25; letter-spacing: -0.02em; }
-.gdesc { font-size: 14px; color: var(--ink-2); text-wrap: pretty; }
-.gmeta { font-size: 12px; color: var(--ink-2); letter-spacing: 0.02em; }
-.chip { font-family: var(--font-body); font-size: 12px; line-height: 1; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); }
-.chip.go { background: var(--accent-ink); border-color: transparent; color: #fff; font-weight: 500; }
-.chip { text-transform: none; }
+.hero .game { min-height: 340px; }
+.soon .game { min-height: 92px; justify-content: center; }
+.gname { display: block; word-break: keep-all; font-family: var(--font-display); font-size: 22px; line-height: 1.25; letter-spacing: -0.03em; }
+.mini { position: absolute; right: 16px; bottom: 14px; display: block; }
+.mini svg { display: block; width: 76px; height: auto; max-height: 76px; }
+.hero .mini { right: 50%; bottom: 20px; transform: translateX(50%); }
+.hero .mini svg { width: 150px; max-height: 174px; }
+.soon .mini { right: 20px; top: 50%; bottom: auto; transform: translateY(-50%); }
+.soon .mini svg { width: 44px; max-height: 44px; }
+.chip { display: inline-block; margin-top: 6px; font-family: var(--font-body); font-size: 12px; line-height: 1; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); }
 .m0 { fill: var(--mini, var(--board)); } .m1 { fill: url(#gRed); } .m2 { fill: url(#gBlue); }
 .gl { stroke: var(--ink-2); stroke-width: 1.4; }
 .stb { fill: var(--ink); } .stw { fill: var(--surface); stroke: var(--ink); stroke-width: 1.4; }
@@ -281,9 +284,14 @@ button { font-family: inherit; }
 
 
 /* 초대 입장 · 만료 안내 */
-.joinbox { margin: 22px 0 0; max-width: 640px; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); display: flex; flex-direction: column; gap: 8px; }
-.joinbox label { font-weight: 500; font-size: 15px; }
-.joinbox .olinput { background: var(--bg); }
+.joinrow { margin: 14px 0 0; max-width: 640px; display: flex; flex-direction: column; gap: 8px; }
+.jr { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); }
+.jlink { flex: none; color: var(--ink-2); }
+.jr .olinput { flex: 1; min-width: 0; min-height: 40px; border: 0; background: transparent; padding: 0 4px; letter-spacing: 0.18em; }
+.jr .olinput::placeholder { letter-spacing: 0; color: var(--ink-2); }
+.jr .olinput:focus { box-shadow: none; }
+.jr:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+.jr .btn { min-height: 40px; }
 .joinbg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: var(--bg); }
 .joinbg[hidden] { display: none; }
 .jcard { width: min(400px, 100%); display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
@@ -377,16 +385,15 @@ body.tutopen { overflow: hidden; }
 <div class="app">
   <section id="view-hub">
     <h1 class="brand">고전게임방</h1>
-    <p class="lede">판 위에서 둘이 겨루는 옛 놀이를 모았어요. 컴퓨터와 겨루거나 한 화면에서 둘이 할 수 있어요.</p>
-    <form class="joinbox" id="homeJoin" autocomplete="off">
-      <label for="homeCode">초대 코드가 있나요?</label>
-      <div class="row olin">
-        <input id="homeCode" class="olinput" type="text" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="코드 4자리">
+    <ul class="games" id="games"></ul>
+    <form class="joinrow" id="homeJoin" autocomplete="off">
+      <div class="jr">
+        <svg class="jlink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l2.4-2.4a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M14 11a5 5 0 0 0-7.1 0L4.5 13.4a5 5 0 0 0 7.1 7.1l1.2-1.2"/></svg>
+        <input id="homeCode" class="olinput" type="text" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="초대 코드 4자리" aria-label="초대 코드">
         <button type="submit" class="btn primary">입장</button>
       </div>
       <p class="hint warn" id="homeJoinErr" role="alert" hidden></p>
     </form>
-    <ul class="games" id="games"></ul>
   </section>
 
   <section id="view-diamond" hidden>

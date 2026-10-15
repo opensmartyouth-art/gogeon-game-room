@@ -1018,21 +1018,16 @@ function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
 const GAMES = [
-  { id: 'diamond', name: '다이아몬드 게임', ready: true, mini: miniStar, meta: '2인 · 컴퓨터 · 온라인 대전',
-    desc: '별 모양 판에서 내 구슬 10개를 반대편 진영으로 먼저 옮기면 이겨요. 구슬을 뛰어넘어 길게 이어 가는 게 핵심이에요.' },
-  { id: 'hobak', name: '호박고누', ready: false, mini: miniDash, meta: '2인',
-    desc: '한국 전통 고누예요. 규칙을 확정한 뒤에 추가해요.' },
-  { id: 'seung', name: '승경도', ready: true, mini: miniSeung, meta: '2인 · 컴퓨터 · 온라인 대전',
-    desc: '조선 관직 말판 놀이예요. 윤목을 굴려 종9품에서 영의정까지 먼저 오르세요. 상소로 다시 굴리고 상대를 견제해요.' },
-  { id: 'omok', name: '오목', ready: true, mini: miniOmok, meta: '2인 · 컴퓨터 · 온라인 대전',
-    desc: '돌 다섯 개를 먼저 한 줄로 이으면 이겨요. 손가락 위로 돌이 떠서, 놓을 자리를 가리지 않고 맞출 수 있어요.' }
+  { id: 'diamond', name: '다이아몬드 게임', ready: true, mini: miniStar },
+  { id: 'seung', name: '승경도', ready: true, mini: miniSeung },
+  { id: 'omok', name: '오목', ready: true, mini: miniOmok },
+  { id: 'hobak', name: '호박고누', ready: false, mini: miniDash }
 ];
 function renderHub() {
-  $('#games').innerHTML = GAMES.map(g =>
-    '<li><button type="button" class="game" data-id="' + g.id + '"' + (g.ready ? '' : ' disabled') + '>' +
-    '<span class="mini">' + g.mini() + '</span>' +
-    '<span class="gtext"><span class="gname">' + g.name + '<span class="chip' + (g.ready ? ' go' : '') + '">' + (g.ready ? '바로 하기' : '준비 중') + '</span></span>' +
-    '<span class="gdesc">' + g.desc + '</span><span class="gmeta">' + g.meta + '</span></span></button></li>'
+  $('#games').innerHTML = GAMES.map((g, i) =>
+    '<li' + (i === 0 ? ' class="hero"' : !g.ready ? ' class="soon"' : '') + '><button type="button" class="game" data-id="' + g.id + '"' + (g.ready ? '' : ' disabled') + '>' +
+    '<span class="gname">' + g.name + '</span>' + (g.ready ? '' : '<span class="chip">준비 중</span>') +
+    '<span class="mini">' + g.mini() + '</span></button></li>'
   ).join('');
 }
 
