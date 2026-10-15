@@ -991,7 +991,7 @@ function onModeChange() {
 function miniStar() {
   let s = '<svg viewBox="-204 -236 408 472" width="60" height="69" aria-hidden="true">';
   CELLS.forEach((c, i) => {
-    s += '<circle cx="' + POS[i].x + '" cy="' + POS[i].y + '" r="12.5" class="' + (c.z >= 5 ? 'm1' : c.z <= -5 ? 'm2' : 'm0') + '"/>';
+    s += '<circle cx="' + POS[i].x + '" cy="' + POS[i].y + '" r="12.5" fill="' + (c.z >= 5 ? 'var(--red)' : c.z <= -5 ? 'var(--blue)' : 'var(--mini)') + '"/>';
   });
   return s + '</svg>';
 }
@@ -1018,15 +1018,15 @@ function miniDash() {
   return '<svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true"><rect x="7" y="7" width="46" height="46" rx="10" class="dash"/></svg>';
 }
 const GAMES = [
-  { id: 'diamond', name: '다이아몬드 게임', ready: true, mini: miniStar },
-  { id: 'seung', name: '승경도', ready: true, mini: miniSeung },
-  { id: 'omok', name: '오목', ready: true, mini: miniOmok },
-  { id: 'hobak', name: '호박고누', ready: false, mini: miniDash }
+  { id: 'diamond', name: '다이아몬드 게임', sub: '먼저 건너가요', ready: true, mini: miniStar },
+  { id: 'seung', name: '승경도', sub: '주사위로 승진해요', ready: true, mini: miniSeung },
+  { id: 'omok', name: '오목', sub: '다섯 줄을 만들어요', ready: true, mini: miniOmok },
+  { id: 'hobak', name: '호박고누', sub: '곧 만나요', ready: false, mini: miniDash }
 ];
 function renderHub() {
-  $('#games').innerHTML = GAMES.map((g, i) =>
-    '<li' + (i === 0 ? ' class="hero"' : !g.ready ? ' class="soon"' : '') + '><button type="button" class="game" data-id="' + g.id + '"' + (g.ready ? '' : ' disabled') + '>' +
-    '<span class="gname">' + g.name + '</span>' + (g.ready ? '' : '<span class="chip">준비 중</span>') +
+  $('#games').innerHTML = GAMES.map(g =>
+    '<li><button type="button" class="game" data-id="' + g.id + '"' + (g.ready ? '' : ' disabled') + '>' +
+    '<span class="gname">' + g.name + '</span><span class="gsub">' + g.sub + '</span>' +
     '<span class="mini">' + g.mini() + '</span></button></li>'
   ).join('');
 }

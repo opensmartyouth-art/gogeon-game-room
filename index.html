@@ -89,10 +89,8 @@ button { font-family: inherit; }
 .brand::after { content: ""; display: block; width: 104px; height: 5px; margin-top: 14px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) 0 34%, var(--gold) 34% 56%, var(--teal) 56% 74%, var(--ink) 74%); }
 .games { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 640px; }
 .games li { min-width: 0; }
-.games li.hero { grid-row: span 2; }
-.games li.soon { grid-column: 1 / -1; }
 .game {
-  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; height: 100%; min-height: 164px; padding: 18px; overflow: hidden; text-align: left; color: inherit; font: inherit;
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; height: 100%; min-height: 176px; padding: 18px; overflow: hidden; text-align: left; color: inherit; font: inherit;
   background: var(--card); border: 1px solid var(--line); border-radius: var(--r-xl); cursor: pointer;
   transition: transform 120ms ease-out, border-color 120ms;
 }
@@ -100,15 +98,10 @@ button { font-family: inherit; }
 .game:not([disabled]):active { transform: translateY(0) scale(0.98); }
 .btn:not(:disabled):active { transform: scale(0.97); }
 .game[disabled] { cursor: default; background: transparent; border-style: dashed; color: var(--ink-2); }
-.hero .game { min-height: 340px; }
-.soon .game { min-height: 92px; justify-content: center; }
-.gname { display: block; word-break: keep-all; font-family: var(--font-display); font-size: 22px; line-height: 1.25; letter-spacing: -0.03em; }
-.mini { position: absolute; right: 16px; bottom: 14px; display: block; }
-.mini svg { display: block; width: 76px; height: auto; max-height: 76px; }
-.hero .mini { right: 50%; bottom: 20px; transform: translateX(50%); }
-.hero .mini svg { width: 150px; max-height: 174px; }
-.soon .mini { right: 20px; top: 50%; bottom: auto; transform: translateY(-50%); }
-.soon .mini svg { width: 44px; max-height: 44px; }
+.gname { display: block; word-break: keep-all; font-family: var(--font-display); font-size: 20px; line-height: 1.25; letter-spacing: -0.03em; }
+.gsub { display: block; margin-top: 6px; font-size: 14px; line-height: 1.4; color: var(--ink-2); word-break: keep-all; }
+.mini { position: absolute; right: 14px; bottom: 14px; display: block; }
+.mini svg { display: block; width: 60px; height: 60px; }
 .chip { display: inline-block; margin-top: 6px; font-family: var(--font-body); font-size: 12px; line-height: 1; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); }
 .m0 { fill: var(--mini, var(--board)); } .m1 { fill: url(#gRed); } .m2 { fill: url(#gBlue); }
 .gl { stroke: var(--ink-2); stroke-width: 1.4; }
